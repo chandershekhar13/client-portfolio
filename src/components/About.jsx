@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function About() {
   return (
-    <section id="bio" className="min-h-screen bg-black text-white py-20 px-4 md:px-10 flex items-center">
+    <section id="bio" className="min-h-screen bg-black text-white py-20 px-4 md:px-10 flex items-center overflow-hidden">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
         {/* LEFT SIDE: THE IMAGE */}

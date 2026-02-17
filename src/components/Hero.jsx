@@ -23,7 +23,7 @@ export default function Hero() {
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.8, delay: 0.2 }}
-  className="text-xs md:text-xl font-light tracking-widest md:tracking-[0.3em] text-gray-300 uppercase mb-4 text-center"
+  className="text-sm md:text-xl font-light tracking-[0.3em] text-gray-300 uppercase mb-4 text-center"
 >
   Producer • Musician • Drummer
 </motion.h2>
