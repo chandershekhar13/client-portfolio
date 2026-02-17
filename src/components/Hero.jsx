@@ -3,49 +3,53 @@ import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
-    <section className="relative h-screen w-full overflow-hidden">
-
-      {/* BACKGROUND IMAGE */}
-      {/* We are using a placeholder standard <img> tag for now to avoid Next.js config errors. 
-          Later we will swap this for the optimized Next/Image component. */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519892300165-31a5463f0f8f?q=80&w=2070&auto=format&fit=crop')" }} 
+    <section className="relative h-screen w-full overflow-hidden bg-black">
+      
+      {/* THE VIDEO BACKGROUND */}
+      <video
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        // This is a backup link from a different source
+        src="https://www.w3schools.com/html/mov_bbb.mp4" 
       >
-        {/* Dark Overlay - Crucial for text readability */}
-        <div className="absolute inset-0 bg-black/60" />
-      </div>
+        Your browser does not support the video tag.
+      </video>
 
-      {/* ANIMATED TEXT CONTENT */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-center text-center px-4">
+      {/* THE DARK OVERLAY */}
+      <div className="absolute inset-0 bg-black/50 z-10" />
 
+      {/* TEXT CONTENT */}
+      <div className="relative z-20 flex h-full flex-col items-center justify-center text-center px-4">
         <motion.h2 
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8, delay: 0.2 }}
-  className="text-sm md:text-xl font-light tracking-[0.3em] text-gray-300 uppercase mb-4 text-center"
->
-  Producer • Musician • Drummer
-</motion.h2>
-
-        <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-5xl md:text-8xl font-bold text-white tracking-tighter"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-sm md:text-xl font-light tracking-[0.3em] text-gray-300 uppercase mb-4"
         >
-          CLIENT NAME
-        </motion.h1>
+          Producer • Musician • Drummer
+        </motion.h2>
+<motion.div
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 1, delay: 0.4 }}
+  className="relative z-20 mb-8"
+>
+  <img 
+    src="/signature.png" // Replace with your exact filename
+    alt="Sahil Sarin Signature"
+    className="h-32 md:h-56 w-auto mx-auto"
+  />
+</motion.div>
 
         <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
           className="absolute bottom-10 animate-bounce"
         >
-          <span className="text-white/50 text-sm tracking-widest uppercase">Scroll Down</span>
+          <span className="text-white/50 text-xs tracking-widest uppercase">Scroll Down</span>
         </motion.div>
-
       </div>
     </section>
   );
