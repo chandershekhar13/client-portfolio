@@ -2,12 +2,12 @@
 import { motion } from "framer-motion";
 
 const images = [
-  "https://images.unsplash.com/photo-1519892300165-31a5463f0f8f?q=80&w=800",
-  "https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?q=80&w=800",
-  "https://images.unsplash.com/photo-1485579149621-3123dd979885?q=80&w=800",
-  "https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=800",
-  "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=800",
-  "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800"
+  "https://picsum.photos/id/237/800/1200", // Dog (Tall)
+  "https://picsum.photos/id/1/800/600",    // Laptop (Wide)
+  "https://picsum.photos/id/10/800/800",   // Forest (Square)
+  "https://picsum.photos/id/20/800/1000",  // Notebook (Tall)
+  "https://picsum.photos/id/30/800/700",   // Mug (Wide)
+  "https://picsum.photos/id/40/800/900",   // Cat (Tall)
 ];
 
 export default function Gallery() {

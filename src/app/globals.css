@@ -5,9 +5,10 @@
   --color-foreground: #ffffff;
 }
 
-/* This applies the dark mode background globally */
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden; /* <--- ADD THIS LINE */
+  width: 100%;        /* <--- ADD THIS LINE */
 }
