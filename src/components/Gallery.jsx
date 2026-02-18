@@ -1,50 +1,98 @@
 "use client";
-import { motion } from "framer-motion";
+import { useRef, useEffect } from "react";
 
-const images = [
-  "https://picsum.photos/id/237/800/1200", // Dog (Tall)
-  "https://picsum.photos/id/1/800/600",    // Laptop (Wide)
-  "https://picsum.photos/id/10/800/800",   // Forest (Square)
-  "https://picsum.photos/id/20/800/1000",  // Notebook (Tall)
-  "https://picsum.photos/id/30/800/700",   // Mug (Wide)
-  "https://picsum.photos/id/40/800/900",   // Cat (Tall)
+const originalImages = [
+  "/Gallery/IMG_2037.jpg",
+  "/Gallery/IMG_2039.jpg",
+  "/Gallery/IMG_2040.jpg",
+  "/Gallery/IMG_2055.jpg",
+  "/Gallery/IMG_2057.png",
+  "/Gallery/IMG_2059.jpg",
+  "/Gallery/IMG_2060.jpg",
+  "/Gallery/IMG_2038.jpg",
+  "/Gallery/IMG_2063.jpg",
 ];
 
+// Duplicate 4 times for infinite illusion
+const images = [...originalImages, ...originalImages, ...originalImages, ...originalImages];
+
 export default function Gallery() {
+  const scrollRef = useRef(null);
+  const isPaused = useRef(false); // Using Ref instead of State for instant feedback
+
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    let animationFrameId;
+
+    const loop = () => {
+      // 1. Only scroll if NOT paused
+      if (!isPaused.current && scrollContainer) {
+        scrollContainer.scrollLeft += 1; // SPEED: Change to 0.5 for slower, 2 for faster
+
+        // 2. Infinite Loop Logic (Reset position seamlessly)
+        // If we have scrolled past half the content, snap back to 0
+        if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
+          scrollContainer.scrollLeft = 0;
+        }
+      }
+      
+      // 3. Keep the loop running 60fps
+      animationFrameId = requestAnimationFrame(loop);
+    };
+
+    // Start the loop
+    animationFrameId = requestAnimationFrame(loop);
+
+    // Cleanup when component unmounts
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
+  // EVENT HANDLERS (Directly flipping the Ref switch)
+  const pause = () => { isPaused.current = true; };
+  const resume = () => { 
+    // Wait 1 second before resuming
+    setTimeout(() => {
+      isPaused.current = false;
+    }, 1000);
+  };
+
   return (
-    <section id="photos" className="bg-black py-20 px-4">
-      <div className="max-w-7xl mx-auto">
-
-        <motion.h2 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl md:text-5xl font-bold text-white mb-12 text-center uppercase tracking-widest"
-        >
+    <section id="photos" className="bg-black py-24 border-t border-white/10">
+      
+      <div className="px-6 mb-8 max-w-7xl mx-auto">
+        <h2 className="font-oswald text-4xl md:text-6xl font-bold uppercase text-white tracking-tighter">
           Gallery
-        </motion.h2>
-
-        {/* MASONRY GRID */}
-        <div className="columns-1 md:columns-3 gap-4 space-y-4">
-          {images.map((src, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="break-inside-avoid overflow-hidden rounded-lg"
-            >
-              <img 
-                src={src} 
-                alt={`Gallery image ${index + 1}`}
-                className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500 ease-in-out"
-              />
-            </motion.div>
-          ))}
-        </div>
-
+        </h2>
+        <div className="h-1 w-20 bg-white mt-4" />
       </div>
+
+      {/* SCROLL CONTAINER */}
+      <div 
+        ref={scrollRef}
+        // PAUSE on these events
+        onMouseEnter={pause}
+        onTouchStart={pause}
+        
+        // RESUME on these events
+        onMouseLeave={resume}
+        onTouchEnd={resume}
+        
+        className="flex overflow-x-auto space-x-6 px-6 pb-12 no-scrollbar cursor-grab active:cursor-grabbing"
+      >
+        {images.map((src, index) => (
+          <div 
+            key={index}
+            className="relative flex-shrink-0 w-[280px] md:w-[350px] aspect-[2/3] group overflow-hidden border border-white/10"
+          >
+            <img 
+              src={src} 
+              alt={`Portrait ${index}`}
+              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 ease-in-out transform group-hover:scale-110 pointer-events-none select-none"
+            />
+          </div>
+        ))}
+      </div>
+
     </section>
   );
 }
