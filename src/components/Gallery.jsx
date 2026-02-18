@@ -19,8 +19,9 @@ const images = [...originalImages, ...originalImages, ...originalImages, ...orig
 export default function Gallery() {
   const scrollRef = useRef(null);
   
-  // Refs for logic (Instant updates, no re-renders)
-  const isDragging = useRef(false);
+  // Refs for logic
+  const isDragging = useRef(false); // For Desktop Click & Drag
+  const isTouching = useRef(false); // For Mobile Touch interaction
   const startX = useRef(0);
   const scrollLeftStart = useRef(0);
 
@@ -31,8 +32,9 @@ export default function Gallery() {
     const loop = () => {
       if (!scrollContainer) return;
 
-      // 1. AUTO-SCROLL (Only if NOT dragging)
-      if (!isDragging.current) {
+      // 1. AUTO-SCROLL LOGIC
+      // Only move if user is NOT Dragging (Desktop) AND NOT Touching (Mobile)
+      if (!isDragging.current && !isTouching.current) {
         scrollContainer.scrollLeft += 1.5; // Speed
       }
 
@@ -41,8 +43,7 @@ export default function Gallery() {
         scrollContainer.scrollLeft = 0;
       }
 
-      // 3. VISUAL LOGIC
-      // Check if we are on mobile
+      // 3. VISUAL LOGIC (Mobile Spotlight)
       if (window.innerWidth < 768) {
          const centerPoint = scrollContainer.scrollLeft + (window.innerWidth / 2);
          const imageNodes = scrollContainer.children;
@@ -50,12 +51,10 @@ export default function Gallery() {
          for (let i = 0; i < imageNodes.length; i++) {
            const container = imageNodes[i];
            const img = container.querySelector('img');
-           
            if (img) {
              const imgCenter = container.offsetLeft + (container.offsetWidth / 2);
              const distance = Math.abs(centerPoint - imgCenter);
-
-             // Mobile Center Spotlight
+             
              if (distance < 150) {
                img.style.filter = "grayscale(0%)";
                img.style.transform = "scale(1.1)";
@@ -68,8 +67,7 @@ export default function Gallery() {
            }
          }
       } else {
-         // DESKTOP: CLEANUP
-         // Ensure we strip inline styles so CSS hover works
+         // DESKTOP CLEANUP
          const imageNodes = scrollContainer.children;
          for (let i = 0; i < imageNodes.length; i++) {
             const img = imageNodes[i].querySelector('img');
@@ -87,32 +85,34 @@ export default function Gallery() {
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
-  // --- DRAG HANDLERS (MOUSE + TOUCH) ---
-
-  const handleDragStart = (e) => {
+  // --- DESKTOP MOUSE HANDLERS (Manual Drag Math) ---
+  const handleMouseDown = (e) => {
     isDragging.current = true;
-    
-    // Get X position based on Mouse or Touch
-    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
-    
-    startX.current = pageX - scrollRef.current.offsetLeft;
+    startX.current = e.pageX - scrollRef.current.offsetLeft;
     scrollLeftStart.current = scrollRef.current.scrollLeft;
+    // Disable smooth scroll for instant drag response
+    scrollRef.current.style.scrollBehavior = 'auto'; 
   };
 
-  const handleDragMove = (e) => {
+  const handleMouseMove = (e) => {
     if (!isDragging.current) return;
-    e.preventDefault(); // Stop browser from doing weird native swipe things
-
-    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
-    const x = pageX - scrollRef.current.offsetLeft;
-    
-    // Multiplier * 2 makes the drag feel faster/more responsive
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
     const walk = (x - startX.current) * 2; 
     scrollRef.current.scrollLeft = scrollLeftStart.current - walk;
   };
 
-  const handleDragEnd = () => {
-    isDragging.current = false;
+  const handleMouseUp = () => { isDragging.current = false; };
+
+  // --- MOBILE TOUCH HANDLERS (Native Scroll Support) ---
+  // We DO NOT calculate math here. We just pause the auto-scroll 
+  // and let the phone's native physics handle the movement.
+  const handleTouchStart = () => { isTouching.current = true; };
+  const handleTouchEnd = () => { 
+    // Wait a tiny bit before resuming auto-scroll so momentum can finish
+    setTimeout(() => {
+      isTouching.current = false; 
+    }, 1000);
   };
 
   return (
@@ -128,33 +128,33 @@ export default function Gallery() {
       <div 
         ref={scrollRef}
         
-        // MOUSE EVENTS
-        onMouseDown={handleDragStart}
-        onMouseUp={handleDragEnd}
-        onMouseLeave={handleDragEnd}
-        onMouseMove={handleDragMove}
+        // DESKTOP EVENTS (Manual Drag)
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onMouseMove={handleMouseMove}
         
-        // TOUCH EVENTS
-        onTouchStart={handleDragStart}
-        onTouchEnd={handleDragEnd}
-        onTouchMove={handleDragMove}
+        // MOBILE EVENTS (Native Scroll Pause/Resume)
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         
-        // CSS: overflow-hidden is CRITICAL here. 
-        // It forces the user to rely on our JS drag logic (no fighting with native scroll)
-        className="flex overflow-hidden space-x-6 px-6 pb-12 cursor-grab active:cursor-grabbing"
-        style={{ touchAction: 'pan-y' }} 
+        // CSS CHANGES:
+        // 1. overflow-x-auto: Enables Native Scroll (Smooth Mobile)
+        // 2. no-scrollbar: Hides the bar
+        // 3. cursor-grab: Shows hand icon on desktop
+        className="flex overflow-x-auto space-x-6 px-6 pb-12 no-scrollbar cursor-grab active:cursor-grabbing"
       >
         {images.map((src, index) => (
           <div 
             key={index}
-            className="relative flex-shrink-0 w-[280px] md:w-[350px] aspect-[2/3]"
+            className="relative flex-shrink-0 w-[280px] md:w-[350px] aspect-[2/3] group"
           >
             <img 
               src={src} 
               alt={`Portrait ${index}`}
               className="w-full h-full object-cover transition-all duration-500 ease-out 
                          grayscale md:hover:grayscale-0 md:hover:scale-110"
-              draggable="false" // Stops the "ghost image" when dragging
+              draggable="false" 
             />
           </div>
         ))}
