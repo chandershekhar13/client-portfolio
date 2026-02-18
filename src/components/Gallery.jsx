@@ -13,47 +13,106 @@ const originalImages = [
   "/Gallery/IMG_2063.jpg",
 ];
 
-// Duplicate 4 times for infinite illusion
+// Duplicate 4 times for infinite loop
 const images = [...originalImages, ...originalImages, ...originalImages, ...originalImages];
 
 export default function Gallery() {
   const scrollRef = useRef(null);
-  const isPaused = useRef(false); // Using Ref instead of State for instant feedback
+  
+  // Refs for logic (Instant updates, no re-renders)
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeftStart = useRef(0);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     let animationFrameId;
 
     const loop = () => {
-      // 1. Only scroll if NOT paused
-      if (!isPaused.current && scrollContainer) {
-        scrollContainer.scrollLeft += 1; // SPEED: Change to 0.5 for slower, 2 for faster
+      if (!scrollContainer) return;
 
-        // 2. Infinite Loop Logic (Reset position seamlessly)
-        // If we have scrolled past half the content, snap back to 0
-        if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
-          scrollContainer.scrollLeft = 0;
-        }
+      // 1. AUTO-SCROLL (Only if NOT dragging)
+      if (!isDragging.current) {
+        scrollContainer.scrollLeft += 1.5; // Speed
       }
-      
-      // 3. Keep the loop running 60fps
+
+      // 2. INFINITE LOOP RESET
+      if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
+        scrollContainer.scrollLeft = 0;
+      }
+
+      // 3. VISUAL LOGIC
+      // Check if we are on mobile
+      if (window.innerWidth < 768) {
+         const centerPoint = scrollContainer.scrollLeft + (window.innerWidth / 2);
+         const imageNodes = scrollContainer.children;
+
+         for (let i = 0; i < imageNodes.length; i++) {
+           const container = imageNodes[i];
+           const img = container.querySelector('img');
+           
+           if (img) {
+             const imgCenter = container.offsetLeft + (container.offsetWidth / 2);
+             const distance = Math.abs(centerPoint - imgCenter);
+
+             // Mobile Center Spotlight
+             if (distance < 150) {
+               img.style.filter = "grayscale(0%)";
+               img.style.transform = "scale(1.1)";
+               img.style.zIndex = "10";
+             } else {
+               img.style.filter = "grayscale(100%)";
+               img.style.transform = "scale(1)";
+               img.style.zIndex = "0";
+             }
+           }
+         }
+      } else {
+         // DESKTOP: CLEANUP
+         // Ensure we strip inline styles so CSS hover works
+         const imageNodes = scrollContainer.children;
+         for (let i = 0; i < imageNodes.length; i++) {
+            const img = imageNodes[i].querySelector('img');
+            if (img && img.style.filter) {
+               img.style.filter = "";
+               img.style.transform = "";
+            }
+         }
+      }
+
       animationFrameId = requestAnimationFrame(loop);
     };
 
-    // Start the loop
     animationFrameId = requestAnimationFrame(loop);
-
-    // Cleanup when component unmounts
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
-  // EVENT HANDLERS (Directly flipping the Ref switch)
-  const pause = () => { isPaused.current = true; };
-  const resume = () => { 
-    // Wait 1 second before resuming
-    setTimeout(() => {
-      isPaused.current = false;
-    }, 1000);
+  // --- DRAG HANDLERS (MOUSE + TOUCH) ---
+
+  const handleDragStart = (e) => {
+    isDragging.current = true;
+    
+    // Get X position based on Mouse or Touch
+    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
+    
+    startX.current = pageX - scrollRef.current.offsetLeft;
+    scrollLeftStart.current = scrollRef.current.scrollLeft;
+  };
+
+  const handleDragMove = (e) => {
+    if (!isDragging.current) return;
+    e.preventDefault(); // Stop browser from doing weird native swipe things
+
+    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
+    const x = pageX - scrollRef.current.offsetLeft;
+    
+    // Multiplier * 2 makes the drag feel faster/more responsive
+    const walk = (x - startX.current) * 2; 
+    scrollRef.current.scrollLeft = scrollLeftStart.current - walk;
+  };
+
+  const handleDragEnd = () => {
+    isDragging.current = false;
   };
 
   return (
@@ -66,33 +125,40 @@ export default function Gallery() {
         <div className="h-1 w-20 bg-white mt-4" />
       </div>
 
-      {/* SCROLL CONTAINER */}
       <div 
         ref={scrollRef}
-        // PAUSE on these events
-        onMouseEnter={pause}
-        onTouchStart={pause}
         
-        // RESUME on these events
-        onMouseLeave={resume}
-        onTouchEnd={resume}
+        // MOUSE EVENTS
+        onMouseDown={handleDragStart}
+        onMouseUp={handleDragEnd}
+        onMouseLeave={handleDragEnd}
+        onMouseMove={handleDragMove}
         
-        className="flex overflow-x-auto space-x-6 px-6 pb-12 no-scrollbar cursor-grab active:cursor-grabbing"
+        // TOUCH EVENTS
+        onTouchStart={handleDragStart}
+        onTouchEnd={handleDragEnd}
+        onTouchMove={handleDragMove}
+        
+        // CSS: overflow-hidden is CRITICAL here. 
+        // It forces the user to rely on our JS drag logic (no fighting with native scroll)
+        className="flex overflow-hidden space-x-6 px-6 pb-12 cursor-grab active:cursor-grabbing"
+        style={{ touchAction: 'pan-y' }} 
       >
         {images.map((src, index) => (
           <div 
             key={index}
-            className="relative flex-shrink-0 w-[280px] md:w-[350px] aspect-[2/3] group overflow-hidden border border-white/10"
+            className="relative flex-shrink-0 w-[280px] md:w-[350px] aspect-[2/3]"
           >
             <img 
               src={src} 
               alt={`Portrait ${index}`}
-              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 ease-in-out transform group-hover:scale-110 pointer-events-none select-none"
+              className="w-full h-full object-cover transition-all duration-500 ease-out 
+                         grayscale md:hover:grayscale-0 md:hover:scale-110"
+              draggable="false" // Stops the "ghost image" when dragging
             />
           </div>
         ))}
       </div>
-
     </section>
   );
 }
