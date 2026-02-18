@@ -45,11 +45,6 @@ export default function Hero() {
   />
 </motion.div>
 
-        <motion.div 
-          className="absolute bottom-10 animate-bounce"
-        >
-          <span className="text-white/50 text-xs tracking-widest uppercase">Scroll Down</span>
-        </motion.div>
       </div>
     </section>
   );
