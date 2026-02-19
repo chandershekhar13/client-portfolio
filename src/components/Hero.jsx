@@ -23,13 +23,12 @@ export default function Hero() {
       {/* --- 3. THE FOREGROUND CONTENT --- */}
       <div className="relative z-20 w-full flex flex-col items-center justify-center px-4 -mt-8">
         
-        {/* THE ULTRA-SLOW MOTION BLOCK */}
+        {/* THE ULTRA-SLOW MOTION BLOCK WITH DELAY */}
         <motion.div 
-          // Starts slightly lower, but not a huge jump
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          // CHANGED: 3 full seconds. Extremely smooth, slow-glide easing curve.
-          transition={{ duration: 3, ease: [0.22, 1, 0.36, 1] }}
+          // CHANGED: Added delay: 1.2. The animation waits 1.2s, then takes 3s to fade in.
+          transition={{ duration: 3, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-center w-full"
         >
           
@@ -59,8 +58,8 @@ export default function Hero() {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        // CHANGED: Delayed until the 2.5-second mark, so it doesn't distract from the main reveal
-        transition={{ delay: 2.5, duration: 2 }}
+        // CHANGED: Pushed back to 3.5s so it appears only after the main text is almost fully visible
+        transition={{ delay: 3.5, duration: 2 }}
         className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 pointer-events-none select-none"
       >
         <span className="text-white/40 text-[9px] md:text-xs uppercase tracking-[0.3em]">Scroll</span>
@@ -69,8 +68,8 @@ export default function Hero() {
         <motion.div 
           initial={{ height: 0 }}
           animate={{ height: "3rem" }} 
-          // Slower, elegant line draw
-          transition={{ delay: 2.5, duration: 2, ease: "easeInOut" }}
+          // Match the delay of the text above it
+          transition={{ delay: 3.5, duration: 2, ease: "easeInOut" }}
           className="w-[1px] bg-gradient-to-b from-white/40 to-transparent" 
         />
       </motion.div>
