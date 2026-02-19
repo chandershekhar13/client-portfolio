@@ -3,49 +3,66 @@ import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-black">
+    <section id="home" className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-black">
       
-      {/* THE VIDEO BACKGROUND */}
+      {/* --- 1. THE BACKGROUND VIDEO --- */}
       <video
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
         autoPlay
         loop
         muted
-        playsInline
-        preload="auto"
-        // This is a backup link from a different source
-        src="https://www.w3schools.com/html/mov_bbb.mp4" 
+        playsInline 
+        className="absolute top-0 left-0 w-full h-full object-cover z-0 grayscale brightness-[0.4] contrast-125 pointer-events-none"
       >
-        Your browser does not support the video tag.
+        <source src="/mainvideo/main.mp4" type="video/mp4" />
       </video>
 
-      {/* THE DARK OVERLAY */}
-      <div className="absolute inset-0 bg-black/50 z-10" />
+      {/* --- 2. THE OVERLAY BLEND --- */}
+      <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-zinc-950 to-transparent z-10 pointer-events-none" />
 
-      {/* TEXT CONTENT */}
-      <div className="relative z-20 flex h-full flex-col items-center justify-center text-center px-4">
-        <motion.h2 
+      {/* --- 3. THE FOREGROUND CONTENT --- */}
+      <div className="relative z-20 w-full flex flex-col items-center justify-center px-4 -mt-8">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-sm md:text-xl font-light tracking-[0.3em] text-gray-300 uppercase mb-4"
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="flex flex-col items-center w-full"
         >
-          Producer • Musician • Drummer
-        </motion.h2>
-<motion.div
-  initial={{ opacity: 0, scale: 0.9 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ duration: 1, delay: 0.4 }}
-  className="relative z-20 mb-8"
->
-  <img 
-    src="/signature.png" // Replace with your exact filename
-    alt="Sahil Sarin Signature"
-    className="h-32 md:h-56 w-auto mx-auto"
-  />
-</motion.div>
-
+          
+          {/* MAIN TITLE: THE SIGNATURE ONLY */}
+          <div className="relative w-full max-w-[280px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px] flex justify-center items-center -my-10 sm:-my-16 md:-my-32 lg:-my-48 z-10">
+            <img 
+              src="/signature.png" 
+              alt="Mark"
+              // CHANGED: opacity-95 -> opacity-90
+              // This subtle drop lets the video background bleed through just enough to look "submerged".
+              className="w-full h-auto object-contain invert opacity-70 drop-shadow-[0_10px_15px_rgba(0,0,0,0.8)] pointer-events-none select-none"
+              draggable="false"
+            />
+          </div>
+          
+          {/* Description */}
+          <div className="flex items-center gap-3 md:gap-6 text-gray-300 text-[10px] md:text-sm font-light tracking-[0.3em] uppercase drop-shadow-md relative z-20 pointer-events-none select-none">
+            <span>Drummer</span>
+            <span className="text-indigo-500">•</span>
+            <span>Producer</span>
+            <span className="text-indigo-500">•</span>
+            <span>Educator</span>
+          </div>
+        </motion.div>
       </div>
+
+      {/* --- 4. SCROLL INDICATOR --- */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 pointer-events-none select-none"
+      >
+        <span className="text-white/40 text-[9px] md:text-xs uppercase tracking-[0.3em]">Scroll</span>
+        <div className="w-[1px] h-8 md:h-12 bg-gradient-to-b from-white/40 to-transparent" />
+      </motion.div>
+
     </section>
   );
 }
