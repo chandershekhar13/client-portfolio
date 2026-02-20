@@ -1,75 +1,161 @@
-"use client"; // This is required because we use hooks (interaction)
-import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react"; // Icons for mobile menu
-
-const navLinks = [
-  { name: "HOME", href: "/" },
-  { name: "BIO", href: "/bio" },
-  { name: "PHOTOS", href: "/photos" },
-  { name: "GEAR", href: "/gear" },
-  { name: "CONTACT", href: "/contact" },
-];
+"use client";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+
+
+      if (currentScrollY > lastScrollY && currentScrollY > 200 && !isMobileMenuOpen) {
+        setIsHidden(true); 
+      } else {
+        setIsHidden(false); 
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY, isMobileMenuOpen]);
+
+  const handleScrollToSection = (e, targetId) => {
+    e.preventDefault(); 
+    
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+
+    const targetElement = document.getElementById(targetId);
+    if (!targetElement) return;
+
+    setTimeout(() => {
+      const offsetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }, 50);
+  };
+
+  const navLinks = [
+    { name: "Home", id: "home" },
+    { name: "Bio", id: "bio" },
+    { name: "Photos", id: "photos" },
+    { name: "Contact", id: "contact" },
+  ];
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-sm border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <>
+      <motion.nav 
+        initial={{ y: 0 }}
+        animate={{ y: isHidden ? "-100%" : "0%" }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${
+          isScrolled || isMobileMenuOpen 
+            ? "bg-black border-b border-white/10 py-4 shadow-2xl" 
+            : "bg-transparent py-6 md:py-8"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+          
+          <a 
+            href="#home" 
+            onClick={(e) => handleScrollToSection(e, "home")}
+            className="text-white font-oswald font-bold text-xl uppercase tracking-widest cursor-pointer relative z-[60]"
+          >
+            MARK
+          </a>
 
-          {/* Logo / Name */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="text-xl font-bold tracking-widest text-white uppercase">
-              CLIENT NAME
-            </Link>
-          </div>
-
-          {/* Desktop Menu (Hidden on mobile) */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="-mr-2 flex md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-400 hover:text-white p-2"
-            >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu (Dropdown) */}
-      {isOpen && (
-        <div className="md:hidden bg-black border-b border-white/10">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <div className="hidden md:flex items-center gap-8 md:gap-12">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.name}
-                href={link.href}
-                onClick={() => setIsOpen(false)} // Close menu on click
-                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                href={`#${link.id}`}
+                onClick={(e) => handleScrollToSection(e, link.id)}
+                className="text-gray-400 hover:text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] transition-colors cursor-pointer"
               >
                 {link.name}
-              </Link>
+              </a>
             ))}
           </div>
+
+          <div className="md:hidden relative z-[60]">
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-white focus:outline-none p-2 -mr-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 transition-transform duration-300">
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                )}
+              </svg>
+            </button>
+          </div>
+
         </div>
-      )}
-    </nav>
+      </motion.nav>
+
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: "-10%" }}
+            animate={{ opacity: 1, y: "0%" }}
+            exit={{ opacity: 0, y: "-10%" }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 bg-black z-40 flex flex-col items-center justify-center min-h-screen"
+          >
+            <div className="flex flex-col items-center gap-10">
+              {navLinks.map((link, index) => (
+                <motion.a
+                  key={link.name}
+                  href={`#${link.id}`}
+                  onClick={(e) => handleScrollToSection(e, link.id)}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 + 0.1, duration: 0.4, ease: "easeOut" }}
+                  className="text-white text-3xl font-oswald font-bold uppercase tracking-[0.2em] hover:text-indigo-500 transition-colors"
+                >
+                  {link.name}
+                </motion.a>
+              ))}
+            </div>
+            
+            <motion.div 
+             initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="absolute bottom-12 text-gray-500 text-[10px] tracking-widest uppercase"
+            >
+              Drummer • Producer • Educator
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

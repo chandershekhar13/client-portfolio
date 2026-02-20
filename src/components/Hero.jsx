@@ -5,7 +5,6 @@ export default function Hero() {
   return (
     <section id="home" className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-black">
       
-      {/* --- 1. THE BACKGROUND VIDEO --- */}
       <video
         autoPlay
         loop
@@ -16,24 +15,21 @@ export default function Hero() {
         <source src="/mainvideo/main.mp4" type="video/mp4" />
       </video>
 
-      {/* --- 2. THE OVERLAY BLEND --- */}
       <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-zinc-950 to-transparent z-10 pointer-events-none" />
 
-      {/* --- 3. THE FOREGROUND CONTENT --- */}
+
       <div className="relative z-20 w-full flex flex-col items-center justify-center px-4 -mt-8">
         
-        {/* THE ULTRA-SLOW MOTION BLOCK WITH DELAY */}
         <motion.div 
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          // CHANGED: Added delay: 1.2. The animation waits 1.2s, then takes 3s to fade in.
+
           transition={{ duration: 3, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-center w-full"
         >
           
-          {/* MAIN TITLE: THE SIGNATURE */}
-          <div className="relative w-full aspect-square max-w-[280px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px] flex justify-center items-center -my-10 sm:-my-16 md:-my-32 lg:-my-48 z-10">
+  <div className="relative w-full aspect-square max-w-[280px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px] flex justify-center items-center -my-10 sm:-my-16 md:-my-32 lg:-my-48 z-10">
             <img 
               src="/signature.png" 
               alt="Mark"
@@ -42,7 +38,7 @@ export default function Hero() {
             />
           </div>
           
-          {/* Description */}
+
           <div className="flex items-center gap-3 md:gap-6 text-gray-300 text-[10px] md:text-sm font-light tracking-[0.3em] uppercase drop-shadow-md relative z-20 pointer-events-none select-none">
             <span>Drummer</span>
             <span className="text-indigo-500">•</span>
@@ -54,21 +50,20 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* --- 4. SCROLL INDICATOR --- */}
+
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        // CHANGED: Pushed back to 3.5s so it appears only after the main text is almost fully visible
+
         transition={{ delay: 3.5, duration: 2 }}
         className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 pointer-events-none select-none"
       >
         <span className="text-white/40 text-[9px] md:text-xs uppercase tracking-[0.3em]">Scroll</span>
         
-        {/* Animated Line growing downwards */}
+
         <motion.div 
           initial={{ height: 0 }}
           animate={{ height: "3rem" }} 
-          // Match the delay of the text above it
           transition={{ delay: 3.5, duration: 2, ease: "easeInOut" }}
           className="w-[1px] bg-gradient-to-b from-white/40 to-transparent" 
         />
