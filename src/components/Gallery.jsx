@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useEffect } from "react";
+import { motion, useInView } from "framer-motion";
 
 const originalImages = [
   "/Gallery/IMG_2037.jpg",
@@ -13,37 +14,35 @@ const originalImages = [
   "/Gallery/IMG_2063.jpg",
 ];
 
-// Duplicate 4 times for infinite loop
 const images = [...originalImages, ...originalImages, ...originalImages, ...originalImages];
 
 export default function Gallery() {
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-100px 0px 0px 0px" });
+
   const scrollRef = useRef(null);
-  
-  // Refs for logic
-  const isDragging = useRef(false); // For Desktop Click & Drag
-  const isTouching = useRef(false); // For Mobile Touch interaction
+  const isDragging = useRef(false);
+  const isTouching = useRef(false);
   const startX = useRef(0);
   const scrollLeftStart = useRef(0);
 
   useEffect(() => {
+    if (!isInView) return;
+
     const scrollContainer = scrollRef.current;
     let animationFrameId;
 
     const loop = () => {
       if (!scrollContainer) return;
 
-      // 1. AUTO-SCROLL LOGIC
-      // Only move if user is NOT Dragging (Desktop) AND NOT Touching (Mobile)
       if (!isDragging.current && !isTouching.current) {
-        scrollContainer.scrollLeft += 1.5; // Speed
+        scrollContainer.scrollLeft += 1.5; 
       }
 
-      // 2. INFINITE LOOP RESET
       if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
         scrollContainer.scrollLeft = 0;
       }
 
-      // 3. VISUAL LOGIC (Mobile Spotlight)
       if (window.innerWidth < 768) {
          const centerPoint = scrollContainer.scrollLeft + (window.innerWidth / 2);
          const imageNodes = scrollContainer.children;
@@ -51,30 +50,34 @@ export default function Gallery() {
          for (let i = 0; i < imageNodes.length; i++) {
            const container = imageNodes[i];
            const img = container.querySelector('img');
-           if (img) {
+           
+           if (container) {
              const imgCenter = container.offsetLeft + (container.offsetWidth / 2);
              const distance = Math.abs(centerPoint - imgCenter);
              
              if (distance < 150) {
-               img.style.filter = "grayscale(0%)";
-               img.style.transform = "scale(1.1)";
-               img.style.zIndex = "10";
+               container.style.transform = "scale(1.05)";
+               container.style.opacity = "1";
+               container.style.zIndex = "10";
+               if (img) img.style.filter = "grayscale(0%)";
              } else {
-               img.style.filter = "grayscale(100%)";
-               img.style.transform = "scale(1)";
-               img.style.zIndex = "0";
+               container.style.transform = "scale(0.95)";
+               container.style.opacity = "0.4";
+               container.style.zIndex = "0";
+               if (img) img.style.filter = "grayscale(100%)";
              }
            }
          }
       } else {
-         // DESKTOP CLEANUP
          const imageNodes = scrollContainer.children;
          for (let i = 0; i < imageNodes.length; i++) {
-            const img = imageNodes[i].querySelector('img');
-            if (img && img.style.filter) {
-               img.style.filter = "";
-               img.style.transform = "";
-            }
+            const container = imageNodes[i];
+            const img = container.querySelector('img');
+            
+            container.style.transform = "";
+            container.style.opacity = "";
+            container.style.zIndex = "";
+            if (img) img.style.filter = "";
          }
       }
 
@@ -83,14 +86,12 @@ export default function Gallery() {
 
     animationFrameId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animationFrameId);
-  }, []);
+  }, [isInView]); 
 
-  // --- DESKTOP MOUSE HANDLERS (Manual Drag Math) ---
   const handleMouseDown = (e) => {
     isDragging.current = true;
     startX.current = e.pageX - scrollRef.current.offsetLeft;
     scrollLeftStart.current = scrollRef.current.scrollLeft;
-    // Disable smooth scroll for instant drag response
     scrollRef.current.style.scrollBehavior = 'auto'; 
   };
 
@@ -104,61 +105,66 @@ export default function Gallery() {
 
   const handleMouseUp = () => { isDragging.current = false; };
 
-  // --- MOBILE TOUCH HANDLERS (Native Scroll Support) ---
-  // We DO NOT calculate math here. We just pause the auto-scroll 
-  // and let the phone's native physics handle the movement.
   const handleTouchStart = () => { isTouching.current = true; };
   const handleTouchEnd = () => { 
-    // Wait a tiny bit before resuming auto-scroll so momentum can finish
-    setTimeout(() => {
-      isTouching.current = false; 
-    }, 1000);
+    setTimeout(() => { isTouching.current = false; }, 1000);
   };
 
   return (
-    <section id="photos" className="bg-black py-24 border-t border-white/10">
+    <section id="photos" ref={containerRef} className="bg-black py-24 md:py-32 overflow-hidden border-t border-white/5">
       
-      <div className="px-6 mb-8 max-w-7xl mx-auto">
-        <h2 className="font-oswald text-4xl md:text-6xl font-bold uppercase text-white tracking-tighter">
-          Gallery
-        </h2>
-        <div className="h-1 w-20 bg-white mt-4" />
+      <div className="max-w-7xl mx-auto px-6 mb-12 md:mb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-8 h-[1px] bg-indigo-500"></div>
+            <h2 className="text-indigo-500 font-bold tracking-[0.4em] uppercase text-[10px] md:text-xs">
+              Visuals
+            </h2>
+          </div>
+          <h3 className="font-oswald text-5xl md:text-7xl font-bold uppercase tracking-tighter leading-none text-white">
+            In Action.
+          </h3>
+        </motion.div>
       </div>
 
-      <div 
-        ref={scrollRef}
-        
-        // DESKTOP EVENTS (Manual Drag)
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        
-        // MOBILE EVENTS (Native Scroll Pause/Resume)
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        
-        // CSS CHANGES:
-        // 1. overflow-x-auto: Enables Native Scroll (Smooth Mobile)
-        // 2. no-scrollbar: Hides the bar
-        // 3. cursor-grab: Shows hand icon on desktop
-        className="flex overflow-x-auto space-x-6 px-6 pb-12 no-scrollbar cursor-grab active:cursor-grabbing"
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 1.5, delay: 0.2 }}
+        style={{ WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}
       >
-        {images.map((src, index) => (
-          <div 
-            key={index}
-            className="relative flex-shrink-0 w-[280px] md:w-[350px] aspect-[2/3] group"
-          >
-            <img 
-              src={src} 
-              alt={`Portrait ${index}`}
-              className="w-full h-full object-cover transition-all duration-500 ease-out 
-                         grayscale md:hover:grayscale-0 md:hover:scale-110"
-              draggable="false" 
-            />
-          </div>
-        ))}
-      </div>
+        <div 
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="flex items-center overflow-x-auto gap-4 md:gap-8 px-8 pt-10 pb-16 no-scrollbar cursor-grab active:cursor-grabbing"
+        >
+          {images.map((src, index) => (
+            <div 
+              key={index}
+              className="relative flex-shrink-0 w-[260px] md:w-[350px] aspect-[2/3] rounded-2xl border border-white/5 overflow-hidden bg-zinc-900 group transition-all duration-500"
+            >
+              <img 
+                src={src} 
+                alt={`Gallery photo ${index + 1}`}
+                className="w-full h-full object-cover transition-all duration-700 ease-out 
+                           grayscale md:group-hover:grayscale-0 md:group-hover:scale-105 pointer-events-none select-none"
+                draggable="false" 
+              />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700 pointer-events-none hidden md:block"></div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
     </section>
   );
 }
