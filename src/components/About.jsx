@@ -123,7 +123,7 @@ export default function About() {
               <div className="flex md:items-center gap-8 md:gap-6 text-white font-oswald uppercase tracking-wide">
                 <div className="flex flex-col md:flex-row md:items-center md:gap-2">
                   <span className="text-4xl md:text-4xl font-bold">12+</span>
-                  <span className="text-[10px] md:text-3xl text-gray-400 md:text-white mt-1 md:mt-0 tracking-[0.2em] md:tracking-wide">Years<br className="md:hidden"/>Teaching</span>
+                  <span className="text-[10px] md:text-3xl text-gray-400 md:text-white mt-1 md:mt-0 tracking-[0.2em] md:tracking-wide">Years <br className="md:hidden"/>Teaching</span>
                 </div>
                 
                 <div className="w-[1px] h-12 bg-white/10 md:hidden"></div>
@@ -131,7 +131,7 @@ export default function About() {
                 
                 <div className="flex flex-col md:flex-row md:items-center md:gap-2">
                   <span className="text-4xl md:text-4xl font-bold">8+</span>
-                  <span className="text-[10px] md:text-3xl text-gray-400 md:text-white mt-1 md:mt-0 tracking-[0.2em] md:tracking-wide">Years<br className="md:hidden"/>Live</span>
+                  <span className="text-[10px] md:text-3xl text-gray-400 md:text-white mt-1 md:mt-0 tracking-[0.2em] md:tracking-wide">Years <br className="md:hidden"/>Live</span>
                 </div>
               </div>
             </div>
