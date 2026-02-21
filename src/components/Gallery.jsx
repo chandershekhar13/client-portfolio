@@ -2,6 +2,7 @@
 import { useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 
+// Your optimized WebP collection (Curate this down to your favorite 8-12 images!)
 const originalImages = [
   "/Gallery/IMG_2039.webp", "/Gallery/IMG_1359.webp", "/Gallery/IMG_5889.webp",
   "/Gallery/IMG_2057.webp", "/Gallery/IMG_1128.webp", "/Gallery/IMG_5919.webp",
@@ -16,8 +17,8 @@ const originalImages = [
   "/Gallery/IMG_5934.webp", "/Gallery/IMG_5935.webp"
 ];
 
-// Duplicated 4 times to handle the massive 32-image array for infinite scroll
-const images = [...originalImages, ...originalImages, ...originalImages, ...originalImages];
+// Duplicated 3 times. Once you drop down to 10 images, this will create 30 total nodes (The sweet spot!)
+const images = [...originalImages, ...originalImages, ...originalImages];
 
 export default function Gallery() {
   const containerRef = useRef(null);
@@ -34,7 +35,7 @@ export default function Gallery() {
 
     const scrollContainer = scrollRef.current;
     
-    // Teleport to the middle on load so we can drag left instantly
+    // Teleport to the middle instantly so you can drag backward on load
     if (scrollContainer.scrollLeft === 0) {
       scrollContainer.scrollLeft = scrollContainer.scrollWidth / 2;
     }
@@ -59,7 +60,7 @@ export default function Gallery() {
         if (isDragging.current) scrollLeftStart.current += halfWidth;
       }
 
-      // YOUR EXACT ORIGINAL MOBILE MATH
+      // YOUR EXACT ORIGINAL MOBILE MATH RESTORED
       if (window.innerWidth < 768) {
          const centerPoint = scrollContainer.scrollLeft + (window.innerWidth / 2);
          const imageNodes = scrollContainer.children;
@@ -69,6 +70,7 @@ export default function Gallery() {
            const img = container.querySelector('img');
            
            if (container) {
+             // This math dynamically calculates offsetWidth, so it works perfectly with variable-width landscapes!
              const imgCenter = container.offsetLeft + (container.offsetWidth / 2);
              const distance = Math.abs(centerPoint - imgCenter);
              
@@ -162,19 +164,23 @@ export default function Gallery() {
           onMouseMove={handleMouseMove}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          className="flex items-center overflow-x-auto gap-4 md:gap-8 px-8 pt-10 pb-16 no-scrollbar cursor-grab active:cursor-grabbing"
+          /* Added transform-gpu to help smooth out the mathematical layout changes */
+          className="flex items-center overflow-x-auto gap-4 md:gap-8 px-8 pt-10 pb-16 no-scrollbar cursor-grab active:cursor-grabbing transform-gpu"
         >
           {images.map((src, index) => (
             <div 
               key={index}
-              className="relative flex-shrink-0 w-[260px] md:w-[350px] aspect-[2/3] rounded-2xl border border-white/5 overflow-hidden bg-zinc-900 group transition-all duration-500"
+              /* Massive cinematic height, variable width to let landscapes breathe */
+              className="relative flex-shrink-0 h-[350px] md:h-[550px] w-fit rounded-2xl border border-white/5 overflow-hidden bg-zinc-900 group transition-all duration-500"
             >
               <img 
                 src={src} 
                 alt={`Gallery photo ${index + 1}`}
-                className="w-full h-full object-cover transition-all duration-700 ease-out 
+                /* h-full and w-auto ensures NO cropping happens on the left and right */
+                className="h-full w-auto max-w-none object-cover transition-all duration-700 ease-out 
                            grayscale md:group-hover:grayscale-0 md:group-hover:scale-105 pointer-events-none select-none"
                 draggable="false" 
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700 pointer-events-none hidden md:block"></div>
             </div>
