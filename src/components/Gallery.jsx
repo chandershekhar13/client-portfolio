@@ -1,22 +1,22 @@
-
-
 "use client";
 import { useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 
 const originalImages = [
-  "/Gallery/IMG_2037.jpg",
-  "/Gallery/IMG_2039.jpg",
-  "/Gallery/IMG_2040.jpg",
-  "/Gallery/IMG_2055.jpg",
-  "/Gallery/IMG_2057.png",
-  "/Gallery/IMG_2059.jpg",
-  "/Gallery/IMG_2060.jpg",
-  "/Gallery/IMG_1359.jpg",
-  "/Gallery/IMG_2038.jpg",
-  "/Gallery/IMG_2063.jpg",
+  "/Gallery/IMG_2039.webp", "/Gallery/IMG_1359.webp", "/Gallery/IMG_5889.webp",
+  "/Gallery/IMG_2057.webp", "/Gallery/IMG_1128.webp", "/Gallery/IMG_5919.webp",
+  "/Gallery/IMG_1276.webp", "/Gallery/IMG_2040.webp", "/Gallery/IMG_1340.webp",
+  "/Gallery/IMG_2063.webp", "/Gallery/IMG_5892.webp", "/Gallery/IMG_1342.webp",
+  "/Gallery/IMG_4214.webp", "/Gallery/IMG_2038.webp", "/Gallery/IMG_1224.webp",
+  "/Gallery/IMG_5897.webp", "/Gallery/IMG_2055.webp", "/Gallery/IMG_1363.webp",
+  "/Gallery/IMG_5933.webp", "/Gallery/IMG_1343.webp", "/Gallery/IMG_5895.webp",
+  "/Gallery/IMG_2059.webp", "/Gallery/IMG_1142.webp", "/Gallery/IMG_1401.webp",
+  "/Gallery/IMG_5890.webp", "/Gallery/IMG_2037.webp", "/Gallery/IMG_5923.webp",
+  "/Gallery/IMG_1341.webp", "/Gallery/IMG_5931.webp", "/Gallery/IMG_2060.webp",
+  "/Gallery/IMG_5934.webp", "/Gallery/IMG_5935.webp"
 ];
 
+// Duplicated 4 times to handle the massive 32-image array for infinite scroll
 const images = [...originalImages, ...originalImages, ...originalImages, ...originalImages];
 
 export default function Gallery() {
@@ -33,6 +33,12 @@ export default function Gallery() {
     if (!isInView) return;
 
     const scrollContainer = scrollRef.current;
+    
+    // Teleport to the middle on load so we can drag left instantly
+    if (scrollContainer.scrollLeft === 0) {
+      scrollContainer.scrollLeft = scrollContainer.scrollWidth / 2;
+    }
+
     let animationFrameId;
 
     const loop = () => {
@@ -42,15 +48,18 @@ export default function Gallery() {
         scrollContainer.scrollLeft += 1.5; 
       }
 
-     /* THE FIX: Infinite scroll in BOTH directions without breaking the mouse drag math */
-      if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
-        scrollContainer.scrollLeft -= scrollContainer.scrollWidth / 2;
-        if (isDragging.current) scrollLeftStart.current -= scrollContainer.scrollWidth / 2;
+      const halfWidth = scrollContainer.scrollWidth / 2;
+
+      // Infinite loop for both left and right directions
+      if (scrollContainer.scrollLeft >= halfWidth) {
+        scrollContainer.scrollLeft -= halfWidth;
+        if (isDragging.current) scrollLeftStart.current -= halfWidth;
       } else if (scrollContainer.scrollLeft <= 0) {
-        scrollContainer.scrollLeft += scrollContainer.scrollWidth / 2;
-        if (isDragging.current) scrollLeftStart.current += scrollContainer.scrollWidth / 2;
+        scrollContainer.scrollLeft += halfWidth;
+        if (isDragging.current) scrollLeftStart.current += halfWidth;
       }
 
+      // YOUR EXACT ORIGINAL MOBILE MATH
       if (window.innerWidth < 768) {
          const centerPoint = scrollContainer.scrollLeft + (window.innerWidth / 2);
          const imageNodes = scrollContainer.children;
@@ -158,14 +167,12 @@ export default function Gallery() {
           {images.map((src, index) => (
             <div 
               key={index}
-              /* THE FIX: Cranked the height up to 550px on desktop (400px on mobile) to restore the massive scale. */
-              className="relative flex-shrink-0 h-[400px] md:h-[550px] w-fit rounded-2xl border border-white/5 overflow-hidden bg-zinc-900 group transition-all duration-500"
+              className="relative flex-shrink-0 w-[260px] md:w-[350px] aspect-[2/3] rounded-2xl border border-white/5 overflow-hidden bg-zinc-900 group transition-all duration-500"
             >
               <img 
                 src={src} 
                 alt={`Gallery photo ${index + 1}`}
-                /* THE FIX: h-full and w-auto ensures landscape photos just grow wider to match the 550px height without cropping! */
-                className="h-full w-auto max-w-none object-cover transition-all duration-700 ease-out 
+                className="w-full h-full object-cover transition-all duration-700 ease-out 
                            grayscale md:group-hover:grayscale-0 md:group-hover:scale-105 pointer-events-none select-none"
                 draggable="false" 
               />
