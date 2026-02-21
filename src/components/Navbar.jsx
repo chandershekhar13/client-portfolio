@@ -81,13 +81,9 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           
-          <a 
-            href="#home" 
-            onClick={(e) => handleScrollToSection(e, "home")}
-            className="text-white font-oswald font-bold text-xl uppercase tracking-widest cursor-pointer relative z-[60]"
-          >
-            MARK
-          </a>
+          <a href="#home" className="text-white text-base md:text-lg font-bold tracking-[0.2em] uppercase">
+  MARK SCHOOL OF DRUMS
+</a>
 
           <div className="hidden md:flex items-center gap-8 md:gap-12">
             {navLinks.map((link) => (

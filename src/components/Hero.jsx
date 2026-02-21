@@ -3,66 +3,60 @@ import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
-    <section id="home" className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-black">
+    <section id="home" className="relative w-full min-h-[100dvh] flex items-center justify-center bg-black overflow-hidden">
       
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline 
-        // THE FIX: Changed 'origin-center' to 'origin-[25%_center] md:origin-center'
-        // This forces the 3x mobile zoom to anchor on the left side where Mark is playing!
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 grayscale brightness-[0.4] contrast-125 pointer-events-none scale-[3.0] md:scale-100 origin-[25%_center] md:origin-center"
-      >
-        <source src="/mainvideo/main.mp4" type="video/mp4" />
-      </video>
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover object-[25%_center] md:object-center grayscale brightness-[0.4] contrast-125 scale-[1.05]"
+        >
+          <source src="/mainvideo/main.webm" type="video/webm" />
+          <source src="/mainvideo/main.mp4" type="video/mp4" />
+        </video>
+        
+        <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-black via-transparent to-transparent z-10 pointer-events-none" />
+      </div>
 
-      <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-zinc-950 to-transparent z-10 pointer-events-none" />
-
-      <div className="relative z-20 w-full flex flex-col items-center justify-center px-4 -mt-8">
+      <div className="relative z-20 w-full max-w-7xl mx-auto flex flex-col items-center justify-center px-6">
         
         <motion.div 
-          initial={{ opacity: 0, y: 25 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 3, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-center w-full"
         >
-          
-          <div className="relative w-full aspect-square max-w-[280px] sm:max-w-[400px] md:max-w-[600px] lg:max-w-[800px] flex justify-center items-center -my-10 sm:-my-16 md:-my-32 lg:-my-48 z-10">
+          <div className="relative w-full aspect-square max-w-[300px] sm:max-w-[450px] md:max-w-[650px] flex justify-center items-center -mb-8 sm:-mb-16 md:-mb-24 lg:-mb-32">
             <img 
               src="/signature.png" 
-              alt="Mark"
-              className="w-full h-full object-contain invert opacity-90 drop-shadow-[0_10px_15px_rgba(0,0,0,0.8)] pointer-events-none select-none"
+              alt="Mark Signature"
+              className="w-full h-full object-contain invert opacity-90 drop-shadow-[0_20px_40px_rgba(0,0,0,0.9)]"
               draggable="false"
             />
           </div>
           
-          <div className="flex items-center gap-3 md:gap-6 text-gray-300 text-[10px] md:text-sm font-light tracking-[0.3em] uppercase drop-shadow-md relative z-20 pointer-events-none select-none">
+          <div className="flex items-center gap-4 md:gap-8 text-white/60 text-[10px] md:text-xs font-light tracking-[0.4em] uppercase">
             <span>Drummer</span>
-            <span className="text-indigo-500">•</span>
-            <span>Producer</span>
-            <span className="text-indigo-500">•</span>
+            <span className="w-1 h-1 bg-indigo-500 rounded-full" />
             <span>Educator</span>
+            <span className="w-1 h-1 bg-indigo-500 rounded-full" />
+            <span>Performer</span>
           </div>
-
         </motion.div>
       </div>
 
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 3.5, duration: 2 }}
-        className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 pointer-events-none select-none"
+        transition={{ delay: 2.5, duration: 1.5 }}
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20"
       >
-        <span className="text-white/40 text-[9px] md:text-xs uppercase tracking-[0.3em]">Scroll</span>
-        
-        <motion.div 
-          initial={{ height: 0 }}
-          animate={{ height: "3rem" }} 
-          transition={{ delay: 3.5, duration: 2, ease: "easeInOut" }}
-          className="w-[1px] bg-gradient-to-b from-white/40 to-transparent" 
-        />
+        <span className="text-white/30 text-[9px] uppercase tracking-[0.5em]">Scroll</span>
+
+        <div className="w-[1px] h-16 bg-gradient-to-b from-white/30 to-transparent" />
       </motion.div>
 
     </section>

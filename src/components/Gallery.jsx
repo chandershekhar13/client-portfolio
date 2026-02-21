@@ -1,3 +1,5 @@
+
+
 "use client";
 import { useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
@@ -10,6 +12,7 @@ const originalImages = [
   "/Gallery/IMG_2057.png",
   "/Gallery/IMG_2059.jpg",
   "/Gallery/IMG_2060.jpg",
+  "/Gallery/IMG_1359.jpg",
   "/Gallery/IMG_2038.jpg",
   "/Gallery/IMG_2063.jpg",
 ];
@@ -39,8 +42,13 @@ export default function Gallery() {
         scrollContainer.scrollLeft += 1.5; 
       }
 
+     /* THE FIX: Infinite scroll in BOTH directions without breaking the mouse drag math */
       if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
-        scrollContainer.scrollLeft = 0;
+        scrollContainer.scrollLeft -= scrollContainer.scrollWidth / 2;
+        if (isDragging.current) scrollLeftStart.current -= scrollContainer.scrollWidth / 2;
+      } else if (scrollContainer.scrollLeft <= 0) {
+        scrollContainer.scrollLeft += scrollContainer.scrollWidth / 2;
+        if (isDragging.current) scrollLeftStart.current += scrollContainer.scrollWidth / 2;
       }
 
       if (window.innerWidth < 768) {
@@ -150,12 +158,14 @@ export default function Gallery() {
           {images.map((src, index) => (
             <div 
               key={index}
-              className="relative flex-shrink-0 w-[260px] md:w-[350px] aspect-[2/3] rounded-2xl border border-white/5 overflow-hidden bg-zinc-900 group transition-all duration-500"
+              /* THE FIX: Cranked the height up to 550px on desktop (400px on mobile) to restore the massive scale. */
+              className="relative flex-shrink-0 h-[400px] md:h-[550px] w-fit rounded-2xl border border-white/5 overflow-hidden bg-zinc-900 group transition-all duration-500"
             >
               <img 
                 src={src} 
                 alt={`Gallery photo ${index + 1}`}
-                className="w-full h-full object-cover transition-all duration-700 ease-out 
+                /* THE FIX: h-full and w-auto ensures landscape photos just grow wider to match the 550px height without cropping! */
+                className="h-full w-auto max-w-none object-cover transition-all duration-700 ease-out 
                            grayscale md:group-hover:grayscale-0 md:group-hover:scale-105 pointer-events-none select-none"
                 draggable="false" 
               />
