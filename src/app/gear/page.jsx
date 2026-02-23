@@ -1,8 +1,8 @@
 "use client";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import Navbar from "../components/Navbar"; // Adjust path if needed
-import Footer from "../components/Footer"; // Adjust path if needed
+import Navbar from "../../components/Navbar"; // Adjust path if needed
+import Footer from "../../components/Footer"; // Adjust path if needed
 
 const products = [
   {
