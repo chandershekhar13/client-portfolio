@@ -1,11 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation"; // NEW: Detects cross-page navigation
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
+  // 1. Background blur effect on scroll
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -14,6 +17,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -22,33 +26,47 @@ export default function Navbar() {
     }
   }, [isMobileMenuOpen]);
 
-  // Notice Home is now /#home so the math engine can target the Hero section
+  // 2. THE CROSS-PAGE HASH FIX (Gear -> Home)
+  useEffect(() => {
+    // When navigating back from /gear to the homepage, we wait a split second 
+    // for Framer Motion to render the sections, then calculate the exact pixel to scroll to.
+    if (pathname === "/" && window.location.hash) {
+      const targetId = window.location.hash.replace("#", "");
+      
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          const offset = 50; // TIGHTENED: Prevents the massive black gap above Faculty
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - offset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+      }, 400); // 400ms delay ensures perfect accuracy after images load
+    }
+  }, [pathname]);
+
   const navLinks = [
     { name: "Home", href: "/#home" },
     { name: "Biography", href: "/#bio" },
-    { name: "Visuals", href: "/#photos" },
     { name: "Faculty", href: "/#faculty" },
+    { name: "Visuals", href: "/#photos" },
     { name: "Gear", href: "/gear" }, 
     { name: "Contact", href: "/#contact" }
   ];
 
-  // THE CUSTOM SCROLL ENGINE
+  // 3. THE SAME-PAGE SCROLL ENGINE
   const handleNavClick = (e, href) => {
-    // 1. If clicking the Gear page, let the browser load the new page normally
-    if (href === "/gear") return;
+    if (href === "/gear") return; // Let the browser route normally
 
-    // 2. If we are already on the homepage, intercept the click for smooth scrolling
-    if (window.location.pathname === "/") {
-      e.preventDefault(); // Stop the harsh page jump
-      
+    // If we are already on the homepage, intercept for smooth scrolling
+    if (pathname === "/") {
+      e.preventDefault();
       const targetId = href.replace("/#", "");
       const element = document.getElementById(targetId);
       
       if (element) {
-        setIsMobileMenuOpen(false); // Close the mobile menu automatically
-        
-        // Math: Find the element, calculate its position, and subtract 90px for the Navbar height
-        const offset = 90; 
+        setIsMobileMenuOpen(false);
+        const offset = 50; // TIGHTENED: Keeps the headers snug against the Navbar
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.scrollY - offset;
   
@@ -69,13 +87,28 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
           
-          <a href="/#home" onClick={(e) => handleNavClick(e, "/#home")} className="flex items-center gap-3 relative z-[110] group">
-            <span className="text-xl md:text-2xl font-black text-white tracking-tighter group-hover:text-indigo-400 transition-colors duration-500">MARK</span>
-            <div className="border-l-[2px] border-indigo-500 pl-3 py-0.5 flex flex-col justify-center">
-              <span className="text-[7px] md:text-[8px] text-white/70 font-semibold tracking-[0.3em] uppercase leading-none mb-1 group-hover:text-white transition-colors">School Of</span>
-              <span className="text-[9px] md:text-[10px] text-indigo-400 font-black tracking-[0.4em] uppercase leading-none">Drums</span>
-            </div>
-          </a>
+          {/* FIXED: Scaled the Logo back up to its massive, premium size */}
+          {/* HIGH-IMPACT BRUTALIST LOGO */}
+<a href="/#home" onClick={(e) => handleNavClick(e, "/#home")} className="flex items-center gap-3 md:gap-4 relative z-[110] group">
+  
+  {/* The Massive Primary Mark */}
+  <span className="text-4xl md:text-[3.25rem] font-black text-white tracking-[-0.06em] leading-none group-hover:text-indigo-400 transition-colors duration-500 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+    MARK
+  </span>
+  
+  {/* The Engineered Divider (Taller, gradient fade) */}
+  <div className="w-[3px] h-10 md:h-12 bg-gradient-to-b from-indigo-500 via-indigo-500/50 to-transparent"></div>
+  
+  {/* The Micro-Typography Subtext */}
+  <div className="flex flex-col justify-center">
+    <span className="text-[8px] md:text-[9px] text-white/50 font-bold tracking-[0.5em] uppercase leading-none mb-2 group-hover:text-white transition-colors duration-300">
+      School Of
+    </span>
+    <span className="text-[10px] md:text-xs text-indigo-400 font-black tracking-[0.6em] uppercase leading-none">
+      Drums
+    </span>
+  </div>
+</a>
 
           <div className="hidden md:flex items-center gap-8 lg:gap-12 text-[10px] uppercase tracking-[0.2em] font-medium">
             {navLinks.map((link) => (
