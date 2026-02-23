@@ -3,7 +3,7 @@ import { Inter, Oswald } from "next/font/google";
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const oswald = Oswald({ subsets: ["latin"], variable: '--font-oswald' });
 import "./globals.css";
-import Navbar from "../components/Navbar"; 
+
 
 export const metadata = {
   title: "Musician Portfolio",
@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
     // ADDED: className="scroll-smooth"
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.variable} ${oswald.variable} font-sans`}>        
-        <Navbar /> 
+
         {children}
       </body>
     </html>

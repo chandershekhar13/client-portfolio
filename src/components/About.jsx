@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 
-export default function About() {
+export default function BioAbour() {
   const cardVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 1.2, ease: "easeOut" } }
@@ -72,16 +72,16 @@ export default function About() {
                 {/* UPGRADED: Architectural List Structure */}
                 <ul className="flex flex-col gap-5 border-l-2 border-white/5 pl-5">
                   <li>
+                    <span className="text-gray-200 text-base md:text-lg block">Guru Rajneesh Dhiman Ji</span>
+                    <span className="text-gray-500 text-[10px] md:text-xs uppercase tracking-[0.2em] mt-1 block">Guru-Shishya Parampara</span>
+                  </li>
+                  <li>
                     <span className="text-gray-200 text-base md:text-lg block">Guru Vishal Mehta Ji</span>
                     <span className="text-gray-500 text-[10px] md:text-xs uppercase tracking-[0.2em] mt-1 block">Disciple of Pt. Suresh Talwalkar Ji</span>
                   </li>
                   <li>
                     <span className="text-gray-200 text-base md:text-lg block">Gino Banks</span>
                     <span className="text-gray-500 text-[10px] md:text-xs uppercase tracking-[0.2em] mt-1 block">Mumbai</span>
-                  </li>
-                  <li>
-                    <span className="text-gray-200 text-base md:text-lg block">Daio</span>
-                    <span className="text-gray-500 text-[10px] md:text-xs uppercase tracking-[0.2em] mt-1 block">Africa</span>
                   </li>
                 </ul>
               </div>

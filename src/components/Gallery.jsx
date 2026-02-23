@@ -1,8 +1,7 @@
 "use client";
-import { useRef, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 
-// Your optimized WebP collection (Curate this down to your favorite 8-12 images!)
 const originalImages = [
   "/Gallery/IMG_2039.webp", "/Gallery/IMG_1359.webp", "/Gallery/IMG_5889.webp",
   "/Gallery/IMG_2057.webp", "/Gallery/IMG_1128.webp", "/Gallery/IMG_5919.webp",
@@ -17,25 +16,33 @@ const originalImages = [
   "/Gallery/IMG_5934.webp", "/Gallery/IMG_5935.webp"
 ];
 
-// Duplicated 3 times. Once you drop down to 10 images, this will create 30 total nodes (The sweet spot!)
 const images = [...originalImages, ...originalImages, ...originalImages];
 
 export default function Gallery() {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px 0px 0px 0px" });
 
+  // Tracking the exact index to power the Shared Element Transition
+  const [activeIndex, setActiveIndex] = useState(null);
+
   const scrollRef = useRef(null);
   const isDragging = useRef(false);
+  const hasDragged = useRef(false); 
   const isTouching = useRef(false);
   const startX = useRef(0);
   const scrollLeftStart = useRef(0);
 
   useEffect(() => {
-    if (!isInView) return;
+    if (activeIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [activeIndex]);
 
+  useEffect(() => {
+    if (!isInView) return;
     const scrollContainer = scrollRef.current;
-    
-    // Teleport to the middle instantly so you can drag backward on load
     if (scrollContainer.scrollLeft === 0) {
       scrollContainer.scrollLeft = scrollContainer.scrollWidth / 2;
     }
@@ -45,13 +52,13 @@ export default function Gallery() {
     const loop = () => {
       if (!scrollContainer) return;
 
-      if (!isDragging.current && !isTouching.current) {
+      // Pause scroll when lightbox is open
+      if (!isDragging.current && !isTouching.current && activeIndex === null) {
         scrollContainer.scrollLeft += 1.5; 
       }
 
       const halfWidth = scrollContainer.scrollWidth / 2;
 
-      // Infinite loop for both left and right directions
       if (scrollContainer.scrollLeft >= halfWidth) {
         scrollContainer.scrollLeft -= halfWidth;
         if (isDragging.current) scrollLeftStart.current -= halfWidth;
@@ -60,7 +67,6 @@ export default function Gallery() {
         if (isDragging.current) scrollLeftStart.current += halfWidth;
       }
 
-      // YOUR EXACT ORIGINAL MOBILE MATH RESTORED
       if (window.innerWidth < 768) {
          const centerPoint = scrollContainer.scrollLeft + (window.innerWidth / 2);
          const imageNodes = scrollContainer.children;
@@ -70,7 +76,6 @@ export default function Gallery() {
            const img = container.querySelector('img');
            
            if (container) {
-             // This math dynamically calculates offsetWidth, so it works perfectly with variable-width landscapes!
              const imgCenter = container.offsetLeft + (container.offsetWidth / 2);
              const distance = Math.abs(centerPoint - imgCenter);
              
@@ -92,7 +97,6 @@ export default function Gallery() {
          for (let i = 0; i < imageNodes.length; i++) {
             const container = imageNodes[i];
             const img = container.querySelector('img');
-            
             container.style.transform = "";
             container.style.opacity = "";
             container.style.zIndex = "";
@@ -105,10 +109,11 @@ export default function Gallery() {
 
     animationFrameId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [isInView]); 
+  }, [isInView, activeIndex]); 
 
   const handleMouseDown = (e) => {
     isDragging.current = true;
+    hasDragged.current = false;
     startX.current = e.pageX - scrollRef.current.offsetLeft;
     scrollLeftStart.current = scrollRef.current.scrollLeft;
     scrollRef.current.style.scrollBehavior = 'auto'; 
@@ -119,19 +124,75 @@ export default function Gallery() {
     e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
     const walk = (x - startX.current) * 2; 
+    if (Math.abs(walk) > 5) {
+      hasDragged.current = true;
+    }
     scrollRef.current.scrollLeft = scrollLeftStart.current - walk;
   };
 
   const handleMouseUp = () => { isDragging.current = false; };
-
-  const handleTouchStart = () => { isTouching.current = true; };
-  const handleTouchEnd = () => { 
-    setTimeout(() => { isTouching.current = false; }, 1000);
-  };
+  const handleTouchStart = () => { isTouching.current = true; hasDragged.current = false; };
+  const handleTouchEnd = () => { setTimeout(() => { isTouching.current = false; }, 1000); };
 
   return (
-    <section id="photos" ref={containerRef} className="bg-black py-24 md:py-32 overflow-hidden border-t border-white/5">
+    <section id="photos" ref={containerRef} className="bg-black py-24 md:py-32 overflow-hidden border-t border-white/5 relative">
       
+      {/* THE AWWWARDS SHARED-ELEMENT LIGHTBOX */}
+      <AnimatePresence>
+        {activeIndex !== null && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+            
+            {/* 1. Cinematic Background Blur */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className="absolute inset-0 bg-black/95 backdrop-blur-xl pointer-events-auto cursor-pointer"
+              onClick={() => setActiveIndex(null)}
+            />
+
+            {/* 2. Editorial Typography (Fades in over the blur) */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="absolute bottom-8 left-8 md:bottom-12 md:left-12 z-[110] pointer-events-none"
+            >
+              <p className="text-indigo-500 text-[9px] uppercase tracking-[0.4em] font-bold mb-2">Visual Archive</p>
+              <p className="text-white font-serif italic text-xl md:text-3xl opacity-80">Capture {String((activeIndex % originalImages.length) + 1).padStart(2, '0')}</p>
+            </motion.div>
+
+            {/* Rotating Close Button */}
+            <motion.button 
+              initial={{ opacity: 0, rotate: -90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 90 }}
+              transition={{ delay: 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              onClick={() => setActiveIndex(null)}
+              className="absolute top-6 right-6 md:top-10 md:right-10 z-[110] group pointer-events-auto flex items-center gap-4"
+            >
+              <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/50 group-hover:text-white transition-colors hidden md:block">Close</span>
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white transition-colors duration-500">
+                <span className="text-white/60 group-hover:text-black transition-colors font-light text-xl">✕</span>
+              </div>
+            </motion.button>
+
+            {/* 3. The Flying Image (layoutId creates the physics) */}
+            <motion.img 
+              layoutId={`gallery-image-${activeIndex}`}
+              src={images[activeIndex]} 
+              alt="Expanded"
+              transition={{ type: "spring", stiffness: 200, damping: 25, mass: 1 }}
+              className="relative z-[105] max-w-[90vw] max-h-[85vh] object-contain drop-shadow-[0_30px_80px_rgba(0,0,0,0.8)] pointer-events-auto"
+              draggable="false"
+            />
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* STANDARD GALLERY STRUCTURE */}
       <div className="max-w-7xl mx-auto px-6 mb-12 md:mb-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -164,30 +225,31 @@ export default function Gallery() {
           onMouseMove={handleMouseMove}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          /* Added transform-gpu to help smooth out the mathematical layout changes */
           className="flex items-center overflow-x-auto gap-4 md:gap-8 px-8 pt-10 pb-16 no-scrollbar cursor-grab active:cursor-grabbing transform-gpu"
         >
           {images.map((src, index) => (
             <div 
               key={index}
-              /* Massive cinematic height, variable width to let landscapes breathe */
-              className="relative flex-shrink-0 h-[350px] md:h-[550px] w-fit rounded-2xl border border-white/5 overflow-hidden bg-zinc-900 group transition-all duration-500"
+              onClick={() => {
+                if (!hasDragged.current) setActiveIndex(index);
+              }}
+              className="relative flex-shrink-0 h-[350px] md:h-[550px] w-fit rounded-2xl border border-white/5 overflow-hidden bg-zinc-900 group transition-all duration-500 cursor-pointer"
             >
-              <img 
+              {/* The Thumbnail (Tied to the layoutId) */}
+              <motion.img 
+                layoutId={`gallery-image-${index}`}
                 src={src} 
                 alt={`Gallery photo ${index + 1}`}
-                /* h-full and w-auto ensures NO cropping happens on the left and right */
                 className="h-full w-auto max-w-none object-cover transition-all duration-700 ease-out 
                            grayscale md:group-hover:grayscale-0 md:group-hover:scale-105 pointer-events-none select-none"
                 draggable="false" 
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700 pointer-events-none hidden md:block"></div>
+              <div className={`absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700 pointer-events-none hidden md:block ${activeIndex !== null ? 'opacity-0' : 'opacity-100'}`}></div>
             </div>
           ))}
         </div>
       </motion.div>
-
     </section>
   );
 }
