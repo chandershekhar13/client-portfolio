@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 
 export default function Contact() {
   const [activeTab, setActiveTab] = useState("Touring");
-  const tabs = ["Touring", "Studio", "Masterclass", "Other"];
+  
+  // UPDATED: Replaced "Other" with "Shopping"
+  const tabs = ["Touring", "Studio", "Masterclass", "Shopping"];
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -134,7 +136,7 @@ export default function Contact() {
                 }}
               ></textarea>
               <label className="absolute left-0 -top-1 text-[10px] text-white/40 uppercase tracking-[0.2em] transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-6 peer-focus:-top-1 peer-focus:text-[10px] peer-focus:text-indigo-400">
-                Project Details
+                Project / Gear Details
               </label>
             </div>
 

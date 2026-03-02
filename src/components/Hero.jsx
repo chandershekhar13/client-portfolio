@@ -48,16 +48,7 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.5, duration: 1.5 }}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20"
-      >
-        <span className="text-white/30 text-[9px] uppercase tracking-[0.5em]">Scroll</span>
-
-        <div className="w-[1px] h-16 bg-gradient-to-b from-white/30 to-transparent" />
-      </motion.div>
+      
 
     </section>
   );
