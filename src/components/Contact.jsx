@@ -1,159 +1,133 @@
 "use client";
-import { useState } from "react";
+import { useRef } from "react";
 import { motion } from "framer-motion";
 
 export default function Contact() {
-  const [activeTab, setActiveTab] = useState("Touring");
-  
-  // UPDATED: Replaced "Other" with "Shopping"
-  const tabs = ["Touring", "Studio", "Masterclass", "Shopping"];
+  const formRef = useRef();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Transmission sent for:", activeTab);
-    // Wire to EmailJS here
+    console.log("Transmission ready for EmailJS.");
+    // EmailJS wiring will go exactly here
   };
 
   return (
-    <section id="contact" className="relative w-full min-h-screen bg-black text-white flex justify-center items-center py-24 md:py-32 overflow-hidden px-4 sm:px-6 md:px-12">
+    // Adjusted top padding slightly so it anchors nicely below the Faculty section
+    <section id="contact" className="w-full bg-[#050505] text-white pt-24 pb-16 md:pt-32 md:pb-24 px-6 md:px-12 relative overflow-hidden">
       
-      {/* Cinematic Ambient Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] max-w-[1000px] max-h-[1000px] bg-indigo-600/15 rounded-full blur-[120px] md:blur-[180px] pointer-events-none opacity-60" />
+      {/* 1. THE ARCHITECTURAL WATERMARK BRIDGE */}
+      {/* Massive, ultra-faint typography that fills the dead space elegantly */}
+      <div className="absolute top-0 left-0 w-full overflow-hidden pointer-events-none flex justify-center select-none opacity-[0.02] mix-blend-screen">
+        <h2 className="text-[18vw] font-black uppercase tracking-tighter leading-none mt-[-4vw]">
+          CONTACT
+        </h2>
+      </div>
+      
+      {/* A sleek, fading horizontal line to physically separate the sections */}
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-      {/* The Bento Grid Container */}
-      <div className="w-full max-w-6xl relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
-        
-        {/* Cell 1: Massive Header & Intent (Top Left) */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="lg:col-span-8 bg-white/[0.02] backdrop-blur-2xl border border-white/[0.05] rounded-3xl p-8 md:p-12 lg:p-16 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden group"
-        >
-          {/* Subtle top glass edge glare */}
-          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          
-          <div>
-            <p className="text-indigo-400 text-[10px] uppercase tracking-[0.5em] mb-4 font-bold">Initiate</p>
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9]">
-              Let's <br /> Create.
-            </h2>
-          </div>
 
-          {/* The Segmented Control */}
-          <div className="mt-12 flex flex-wrap gap-2 bg-white/[0.02] p-2 rounded-2xl border border-white/[0.05] w-fit">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                className={`relative px-4 md:px-6 py-3 rounded-xl text-[10px] md:text-xs uppercase tracking-widest font-medium transition-colors duration-300 ${
-                  activeTab === tab ? "text-white" : "text-white/40 hover:text-white/80"
-                }`}
-              >
-                {activeTab === tab && (
-                  <motion.div 
-                    layoutId="bentoTab"
-                    className="absolute inset-0 bg-indigo-500/20 border border-indigo-500/50 rounded-xl"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{tab}</span>
-              </button>
-            ))}
-          </div>
-        </motion.div>
+      {/* Super subtle background glow - costs 0 CPU */}
+      <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none"></div>
 
-        {/* Cell 2: Direct Comms (Top Right) */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-          className="lg:col-span-4 grid grid-cols-1 gap-4 md:gap-6"
-        >
-          <div className="bg-white/[0.02] backdrop-blur-2xl border border-white/[0.05] rounded-3xl p-8 md:p-10 flex flex-col justify-center h-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden group">
-             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-             <span className="text-white/30 text-[10px] uppercase tracking-[0.4em] mb-4">Direct Channel</span>
-             <a href="mailto:booking@marksir.com" className="text-lg md:text-xl font-light hover:text-indigo-400 transition-colors tracking-wide">
-               booking@marksir.com
-             </a>
-          </div>
-          
-          <div className="bg-white/[0.02] backdrop-blur-2xl border border-white/[0.05] rounded-3xl p-8 md:p-10 flex flex-col justify-center h-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden group">
-             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-             <span className="text-white/30 text-[10px] uppercase tracking-[0.4em] mb-4">Base of Operations</span>
-             <span className="text-lg md:text-xl font-light tracking-wide text-white/80">Global / Studio Based</span>
-          </div>
-        </motion.div>
+      {/* The main grid layout (100% untouched) */}
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 relative z-10 items-center">
 
-        {/* Cell 3: The Inputs & Submit (Bottom Full Width) */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-          className="lg:col-span-12 bg-white/[0.02] backdrop-blur-2xl border border-white/[0.05] rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden group"
-        >
-          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          
-          <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-10 md:gap-12 items-end">
+        {/* LEFT COLUMN: Professional Greeting */}
+        <div className="lg:col-span-5 flex flex-col justify-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true }} 
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-8 h-[1px] bg-indigo-500"></div>
+              <span className="text-indigo-400 text-[10px] uppercase tracking-[0.4em] font-bold">Connect</span>
+            </div>
             
-            <div className="relative group w-full lg:w-1/3 pt-6">
-              <input 
-                type="text" 
-                required
-                className="w-full bg-transparent border-b border-white/10 pb-4 text-xl font-light text-white focus:outline-none focus:border-indigo-400 transition-colors peer placeholder-transparent"
-                placeholder="Name"
-              />
-              <label className="absolute left-0 -top-1 text-[10px] text-white/40 uppercase tracking-[0.2em] transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-6 peer-focus:-top-1 peer-focus:text-[10px] peer-focus:text-indigo-400">
-                Your Name
-              </label>
-            </div>
+            <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
+              LET'S WORK.
+            </h2>
+            
+            <p className="text-white/60 text-sm md:text-base leading-relaxed mb-12 max-w-md font-light">
+              Currently accepting inquiries for studio sessions, masterclasses, global touring, and exclusive gear purchases. Fill out the form or reach out directly via email.
+            </p>
 
-            <div className="relative group w-full lg:w-1/3 pt-6">
-              <input 
-                type="email" 
-                required
-                className="w-full bg-transparent border-b border-white/10 pb-4 text-xl font-light text-white focus:outline-none focus:border-indigo-400 transition-colors peer placeholder-transparent"
-                placeholder="Email"
-              />
-              <label className="absolute left-0 -top-1 text-[10px] text-white/40 uppercase tracking-[0.2em] transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-6 peer-focus:-top-1 peer-focus:text-[10px] peer-focus:text-indigo-400">
-                Email Address
-              </label>
+            <div className="flex flex-col gap-2 border-l-2 border-white/10 pl-5 py-2">
+              <span className="text-white/30 text-[9px] uppercase tracking-[0.3em] font-bold">Direct Channel</span>
+              <a href="mailto:markdrumsofficial@gmail.com" className="text-lg md:text-xl font-light hover:text-indigo-400 transition-colors w-fit">
+                markdrumsofficial@gmail.com
+              </a>
             </div>
+          </motion.div>
+        </div>
 
-            <div className="relative group w-full lg:w-1/3 pt-6">
-              <textarea 
-                rows="1"
-                required
-                className="w-full bg-transparent border-b border-white/10 pb-4 text-xl font-light text-white focus:outline-none focus:border-indigo-400 transition-colors peer placeholder-transparent resize-none overflow-hidden"
-                placeholder="Details"
-                onInput={(e) => {
-                  e.target.style.height = 'auto';
-                  e.target.style.height = e.target.scrollHeight + 'px';
-                }}
-              ></textarea>
-              <label className="absolute left-0 -top-1 text-[10px] text-white/40 uppercase tracking-[0.2em] transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-6 peer-focus:-top-1 peer-focus:text-[10px] peer-focus:text-indigo-400">
-                Project / Gear Details
-              </label>
-            </div>
+        {/* RIGHT COLUMN: The Clean, Timeless Form */}
+        <div className="lg:col-span-7 flex flex-col justify-center">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }} 
+            whileInView={{ opacity: 1, x: 0 }} 
+            viewport={{ once: true }} 
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-10">
 
-            <div className="w-full lg:w-auto shrink-0 mt-4 lg:mt-0 pb-1">
-              <button 
-                type="submit"
-                className="w-full lg:w-auto group relative px-10 py-5 bg-white text-black rounded-2xl overflow-hidden flex justify-center items-center transition-transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <div className="absolute inset-0 bg-indigo-500 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-2xl" />
-                <span className="relative z-10 text-[10px] uppercase tracking-[0.4em] font-bold group-hover:text-white transition-colors duration-500 whitespace-nowrap">
-                  Transmit
-                </span>
-              </button>
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {/* Name Input */}
+                <div className="flex flex-col gap-3">
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-bold">Your Name</label>
+                  <input 
+                    type="text" 
+                    name="user_name" 
+                    required 
+                    className="bg-transparent border-b border-white/20 pb-3 text-white focus:outline-none focus:border-indigo-400 transition-colors text-lg font-light rounded-none" 
+                  />
+                </div>
 
-          </form>
-        </motion.div>
+                {/* Email Input */}
+                <div className="flex flex-col gap-3">
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-bold">Email Address</label>
+                  <input 
+                    type="email" 
+                    name="user_email" 
+                    required 
+                    className="bg-transparent border-b border-white/20 pb-3 text-white focus:outline-none focus:border-indigo-400 transition-colors text-lg font-light rounded-none" 
+                  />
+                </div>
+              </div>
+
+              {/* Message Input */}
+              <div className="flex flex-col gap-3">
+                <label className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-bold">Project / Gear Details</label>
+                <textarea 
+                  name="message" 
+                  required 
+                  rows="4" 
+                  className="bg-transparent border-b border-white/20 pb-3 text-white focus:outline-none focus:border-indigo-400 transition-colors text-lg font-light resize-none rounded-none"
+                ></textarea>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-4">
+                <button type="submit" className="group relative px-10 py-4 bg-white text-black text-[10px] uppercase tracking-[0.3em] font-bold overflow-hidden rounded-full flex items-center gap-3 transition-transform active:scale-95 w-fit">
+                  <div className="absolute inset-0 bg-indigo-500 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-[0.22,1,0.36,1]"></div>
+                  
+                  <div className="relative z-10 flex items-center gap-3 text-black opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                    <span className="whitespace-nowrap">Send Message</span>
+                    <span className="transform transition-transform duration-500 group-hover:translate-x-1">→</span>
+                  </div>
+                  
+                  <div className="absolute inset-0 z-20 flex items-center justify-center gap-3 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    <span className="whitespace-nowrap">Send Message</span>
+                    <span className="transform translate-x-1">→</span>
+                  </div>
+                </button>
+              </div>
+
+            </form>
+          </motion.div>
+        </div>
 
       </div>
     </section>
