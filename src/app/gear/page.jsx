@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../../components/Navbar"; 
 import Footer from "../../components/Footer"; 
@@ -20,40 +20,65 @@ const products = [
     ]
   },
   {
-    id: "sticks-02",
-    name: "Mark x Vic Firth",
-    type: "Custom Artist Series",
-    price: "$24",
-    description: "A hybrid stick designed for power and finesse. Thicker than a 5A in the shaft for heavy rimshots, but with an extended taper and a barrel tip.",
-    specs: ["Hickory Wood", "Length: 16.25\"", "Diameter: 0.585\""],
-    images: ["/Gallery/IMG_5889.webp"]
+    id: "gear-02",
+    name: "Meinl SB110 Heavy 2B",
+    type: "American Hickory Drum Sticks",
+    price: "Inquire", 
+    description: "Built for heavy hitters. With increased length, diameter, and weight over the standard model, this stick is engineered to transfer maximum kinetic energy directly from your hands into the drums.",
+    specs: ["American Hickory Wood", "Heavy 2B Profile", "Extended Length & Weight", "Engineered in Germany"],
+    images: [
+      "/gears/gear2/1.jpg",
+      "/gears/gear2/2.jpg",
+      "/gears/gear2/3.jpg",
+      "/gears/gear2/4.jpg"
+    ]
   },
   {
-    id: "pad-03",
-    name: "Reflex Practice Pad",
-    type: "Training Equipment",
-    price: "$65",
-    description: "Dual-surface engineering. The top side offers realistic rebound for rudiment flow states, while the bottom side features high-density dead-foam.",
-    specs: ["12\" Diameter", "Gum Rubber Top", "Neoprene Bottom"],
-    images: ["/Gallery/IMG_5919.webp"]
+    id: "gear-03",
+    name: "Meinl SB509 Pad",
+    type: "12\" Practice Surface",
+    price: "Inquire", 
+    description: "Engineered for realistic response and ultra-low volume. This full-size pad perfectly mimics the natural rebound of a real drumhead, allowing you to practice intensely at any hour without disturbing your surroundings.",
+    specs: ["12\" Full-Size Diameter", "Natural Drumhead Rebound", "8mm Thread & Snare Mountable", "Anti-Slip Foam Base"],
+    images: [
+      "/gears/gear3/1.webp",
+      "/gears/gear3/2.webp",
+      "/gears/gear3/3.webp",
+      "/gears/gear3/4.webp",
+      "/gears/gear3/5.webp",
+      "/gears/gear3/6.webp",
+      "/gears/gear3/7.webp",
+      "/gears/gear3/8.webp",
+      "/gears/gear3/9.webp",
+      "/gears/gear3/10.webp"
+    ]
   },
   {
-    id: "cymbal-04",
-    name: "Dark Matter Ride",
-    type: "22\" Custom Wash",
-    price: "$450",
-    description: "Hand-hammered and unlathed. This ride delivers a dark, complex wash with a cutting bell that pierces through even the heaviest metal mixes.",
-    specs: ["22\" Diameter", "Unlathed Finish", "Hand-Hammered B20"],
-    images: ["/Gallery/cymbal_bg.webp"]
+    id: "gear-04",
+    name: "Meinl SB104 Long 5B",
+    type: "American Hickory Drum Sticks",
+    price: "Inquire", 
+    description: "Engineered for absolute consistency. Offering an extra half-inch of reach for a perfectly balanced response, these sticks are crafted with a strictly controlled density and weight range so every pair feels identical.",
+    specs: ["American Hickory Wood", "Standard Long 5B Profile", "+0.5\" Extended Reach", "Engineered in Germany"],
+    images: [
+      "/gears/gear4/1.jpg",
+      "/gears/gear4/2.jpg",
+      "/gears/gear4/3.jpg",
+      "/gears/gear4/4.jpg"
+    ]
   },
+  // UPDATED GEAR 5 WITH YOUR CUSTOM DESCRIPTION
   {
-    id: "trigger-05",
-    name: "Pulse Kick Trigger",
-    type: "Electronic Hardware",
-    price: "$120",
-    description: "Ultra-fast response time with zero double-triggering. Clamps directly to any bass drum hoop for seamless hybrid acoustic/electronic tracking.",
-    specs: ["Zero Latency", "Die-Cast Housing", "XLR/TRS Output"],
-    images: ["/Gallery/trigger_bg.webp"]
+    id: "gear-05",
+    name: "Mark 20\" Artist Concept Ride",
+    type: "Custom Signature Cymbal",
+    price: "Inquire",
+    description: "Engineered for absolute versatility. Crafted from heavily hand-hammered B20 bronze with a brilliant finish, this custom ride delivers a glassy, articulate stick response that seamlessly transitions into a lush, complex wash when crashed.",
+    specs: ["20\" Diameter", "Hand-Hammered B20 Bronze", "Brilliant Finish", "Mark Signature Series"],
+    images: [
+      "/gears/gear5/1.webp",
+      "/gears/gear5/2.mp4" 
+    ]
   }
 ];
 
@@ -61,8 +86,39 @@ function ProductCard({ product, index, openModal }) {
   const [currentImage, setCurrentImage] = useState(0);
   const isEven = index % 2 === 0;
 
+  // Video State & Controls
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const currentMedia = product.images[currentImage];
+  const isVideo = currentMedia?.endsWith('.mp4') || currentMedia?.endsWith('.webm');
+
   const nextSlide = () => setCurrentImage((prev) => (prev + 1) % product.images.length);
   const prevSlide = () => setCurrentImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) videoRef.current.pause();
+      else videoRef.current.play();
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => setIsMuted(!isMuted);
+
+  // NEW: Direct Video Scrubbing Logic
+  const skipForward = () => {
+    if (videoRef.current) videoRef.current.currentTime += 10;
+  };
+  
+  const skipBackward = () => {
+    if (videoRef.current) videoRef.current.currentTime -= 10;
+  };
+
+  useEffect(() => {
+    setIsPlaying(true);
+  }, [currentImage]);
 
   return (
     <motion.div 
@@ -78,19 +134,53 @@ function ProductCard({ product, index, openModal }) {
         
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.05)_0%,transparent_50%)] pointer-events-none"></div>
 
-        {/* 1. The Lightbox Display (Hover effects removed) */}
         <div 
           className="w-full lg:w-[55%] bg-white rounded-[1.5rem] aspect-square md:aspect-[4/3] relative flex items-center justify-center cursor-zoom-in overflow-hidden shadow-inner"
           onClick={() => openModal(product.images, currentImage)}
         >
           <AnimatePresence mode="wait">
-            <motion.img 
-              key={currentImage}
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-              src={product.images[currentImage]} 
-              alt={product.name}
-              className="absolute inset-0 w-full h-full object-contain drop-shadow-xl" 
-            />
+            {isVideo ? (
+              <motion.div 
+                key={`vid-${currentImage}`}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                className="absolute inset-0 w-full h-full bg-black/5"
+              >
+                {/* Notice 'loop' is hardcoded here so it automatically repeats forever */}
+                <video
+                  ref={videoRef}
+                  src={currentMedia}
+                  autoPlay
+                  loop
+                  muted={isMuted}
+                  playsInline
+                  className="w-full h-full object-contain drop-shadow-xl"
+                />
+                
+                {/* UPDATED: Glass HUD with 10s Skip Buttons */}
+                <div className="absolute top-6 right-6 flex items-center gap-2 z-30" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={skipBackward} className="bg-black/80 backdrop-blur-md border border-white/10 text-white text-[9px] uppercase tracking-[0.2em] px-3 py-2 rounded-full hover:bg-white/20 transition-colors shadow-lg">
+                    -10s
+                  </button>
+                  <button onClick={togglePlay} className="bg-black/80 backdrop-blur-md border border-white/10 text-white text-[9px] uppercase tracking-[0.2em] px-4 py-2 rounded-full hover:bg-white/20 transition-colors shadow-lg">
+                    {isPlaying ? "Pause" : "Play"}
+                  </button>
+                  <button onClick={skipForward} className="bg-black/80 backdrop-blur-md border border-white/10 text-white text-[9px] uppercase tracking-[0.2em] px-3 py-2 rounded-full hover:bg-white/20 transition-colors shadow-lg">
+                    +10s
+                  </button>
+                  <button onClick={toggleMute} className="bg-black/80 backdrop-blur-md border border-white/10 text-white text-[9px] uppercase tracking-[0.2em] px-4 py-2 rounded-full hover:bg-white/20 transition-colors shadow-lg">
+                    {isMuted ? "Unmute" : "Mute"}
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.img 
+                key={`img-${currentImage}`}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                src={currentMedia} 
+                alt={product.name}
+                className="absolute inset-0 w-full h-full object-contain drop-shadow-xl" 
+              />
+            )}
           </AnimatePresence>
 
           <div className="absolute top-6 left-6 flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full border border-black/10 z-20 shadow-sm pointer-events-none">
@@ -141,25 +231,16 @@ function ProductCard({ product, index, openModal }) {
             <span className="text-3xl font-light text-white tracking-tight">{product.price}</span>
             
            <a href="/#contact" className="relative group/btn overflow-hidden rounded-full bg-white px-8 py-4 flex items-center justify-center transition-transform active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-  
-  {/* The Indigo Sliding Background */}
-  <div className="absolute inset-0 bg-indigo-500 translate-y-[100%] group-hover/btn:translate-y-0 transition-transform duration-500 ease-[0.22,1,0.36,1]"></div>
-  
-  {/* Base Layer (Black Text) - Fades OUT on hover */}
-  <div className="relative z-10 flex items-center gap-3 text-black opacity-100 group-hover/btn:opacity-0 transition-opacity duration-300">
-    <span className="text-[10px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">Inquire To Order</span>
-    {/* Arrow animates slightly to the right */}
-    <span className="transform transition-transform duration-500 group-hover/btn:translate-x-1">→</span>
-  </div>
-
-  {/* Hover Layer (White Text) - Fades IN on hover */}
-  <div className="absolute inset-0 z-20 flex items-center justify-center gap-3 text-white opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 pointer-events-none">
-    <span className="text-[10px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">Inquire To Order</span>
-    {/* Arrow is pre-shifted to match the final position of the black arrow */}
-    <span className="transform translate-x-1">→</span>
-  </div>
-  
-</a>
+              <div className="absolute inset-0 bg-indigo-500 translate-y-[100%] group-hover/btn:translate-y-0 transition-transform duration-500 ease-[0.22,1,0.36,1]"></div>
+              <div className="relative z-10 flex items-center gap-3 text-black opacity-100 group-hover/btn:opacity-0 transition-opacity duration-300">
+                <span className="text-[10px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">Inquire To Order</span>
+                <span className="transform transition-transform duration-500 group-hover/btn:translate-x-1">→</span>
+              </div>
+              <div className="absolute inset-0 z-20 flex items-center justify-center gap-3 text-white opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <span className="text-[10px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">Inquire To Order</span>
+                <span className="transform translate-x-1">→</span>
+              </div>
+            </a>
           </div>
         </div>
 
@@ -192,7 +273,6 @@ export default function GearPage() {
 
   return (
     <main className="bg-[#030305] min-h-screen text-white relative">
-      
       <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,#11111a_0%,#030305_100%)]"></div>
       <div className="fixed inset-0 z-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_10%,transparent_100%)]"></div>
 
@@ -234,7 +314,17 @@ export default function GearPage() {
             <button onClick={(e) => { e.stopPropagation(); closeModal(); }} className="absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors z-[1000000]">
               ✕
             </button>
-            <img src={modalData.images[modalData.currentIndex]} className="w-full h-full object-contain max-w-7xl mx-auto drop-shadow-2xl" alt="Fullscreen View" />
+            
+            {(modalData.images[modalData.currentIndex]?.endsWith('.mp4') || modalData.images[modalData.currentIndex]?.endsWith('.webm')) ? (
+               <video 
+                 src={modalData.images[modalData.currentIndex]} 
+                 autoPlay loop playsInline controls
+                 className="w-full h-full object-contain max-w-7xl mx-auto drop-shadow-2xl rounded-lg" 
+                 onClick={(e) => e.stopPropagation()}
+               />
+            ) : (
+               <img src={modalData.images[modalData.currentIndex]} className="w-full h-full object-contain max-w-7xl mx-auto drop-shadow-2xl" alt="Fullscreen View" />
+            )}
             
             {modalData.images.length > 1 && (
               <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-4 z-[1000000]" onClick={(e) => e.stopPropagation()}>
