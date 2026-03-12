@@ -3,62 +3,56 @@ import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../../components/Navbar"; 
 import Footer from "../../components/Footer"; 
-
 const products = [
   {
     id: "gear-01",
     name: "Meinl Marshmallow Pad",
-    type: "6\" Practice Pad (Sea Foam)",
+    type: "6\" Practice Pad",
     price: "Inquire", 
     color: "bg-teal-600",
-    description: "Practice quietly and build muscle at any hour. Features a specially formulated, super-thick foam surface that provides realistic rebound with ultra-low volume. Work on rudiments without disturbing anyone around you.",
+    description: "Practice quietly and build muscle at any hour. Features a specially formulated, super-thick foam surface that provides realistic rebound with ultra-low volume.",
     specs: ["6\" Diameter", "Marshmallow Foam Top", "Cymbal Stand Mountable", "Non-slip Composite Base"],
-    images: [
-      "/gears/gear1/1.webp",
-      "/gears/gear1/2.webp",
-      "/gears/gear1/3.webp",
-      "/gears/gear1/4.webp"
-    ]
+    images: ["/gears/gear1/1.webp", "/gears/gear1/2.webp", "/gears/gear1/3.webp", "/gears/gear1/4.webp"]
   },
   {
-    id: "sticks-02",
-    name: "Mark x Vic Firth",
-    type: "Custom Artist Series",
-    price: "$24",
+    id: "gear-02",
+    name: "Meinl Pad (Test 2)",
+    type: "6\" Practice Pad",
+    price: "Inquire",
     color: "bg-rose-600",
-    description: "A hybrid stick designed for power and finesse. Thicker than a 5A in the shaft for heavy rimshots, but with an extended taper and a barrel tip.",
-    specs: ["Hickory Wood", "Length: 16.25\"", "Diameter: 0.585\""],
-    images: ["/Gallery/IMG_5889.webp"]
+    description: "Practice quietly and build muscle at any hour. Features a specially formulated, super-thick foam surface that provides realistic rebound with ultra-low volume.",
+    specs: ["6\" Diameter", "Marshmallow Foam Top", "Cymbal Stand Mountable", "Non-slip Composite Base"],
+    images: ["/gears/gear1/1.webp", "/gears/gear1/2.webp", "/gears/gear1/3.webp", "/gears/gear1/4.webp"]
   },
   {
-    id: "pad-03",
-    name: "Reflex Practice Pad",
-    type: "Training Equipment",
-    price: "$65",
+    id: "gear-03",
+    name: "Meinl Pad (Test 3)",
+    type: "6\" Practice Pad",
+    price: "Inquire",
     color: "bg-emerald-600",
-    description: "Dual-surface engineering. The top side offers realistic rebound for rudiment flow states, while the bottom side features high-density dead-foam.",
-    specs: ["12\" Diameter", "Gum Rubber Top", "Neoprene Bottom"],
-    images: ["/Gallery/IMG_5919.webp"]
+    description: "Practice quietly and build muscle at any hour. Features a specially formulated, super-thick foam surface that provides realistic rebound with ultra-low volume.",
+    specs: ["6\" Diameter", "Marshmallow Foam Top", "Cymbal Stand Mountable", "Non-slip Composite Base"],
+    images: ["/gears/gear1/1.webp", "/gears/gear1/2.webp", "/gears/gear1/3.webp", "/gears/gear1/4.webp"]
   },
   {
-    id: "cymbal-04",
-    name: "Dark Matter Ride",
-    type: "22\" Custom Wash",
-    price: "$450",
+    id: "gear-04",
+    name: "Meinl Pad (Test 4)",
+    type: "6\" Practice Pad",
+    price: "Inquire",
     color: "bg-amber-600",
-    description: "Hand-hammered and unlathed. This ride delivers a dark, complex wash with a cutting bell that pierces through even the heaviest metal mixes.",
-    specs: ["22\" Diameter", "Unlathed Finish", "Hand-Hammered B20"],
-    images: ["/Gallery/cymbal_bg.webp"]
+    description: "Practice quietly and build muscle at any hour. Features a specially formulated, super-thick foam surface that provides realistic rebound with ultra-low volume.",
+    specs: ["6\" Diameter", "Marshmallow Foam Top", "Cymbal Stand Mountable", "Non-slip Composite Base"],
+    images: ["/gears/gear1/1.webp", "/gears/gear1/2.webp", "/gears/gear1/3.webp", "/gears/gear1/4.webp"]
   },
   {
-    id: "trigger-05",
-    name: "Pulse Kick Trigger",
-    type: "Electronic Hardware",
-    price: "$120",
+    id: "gear-05",
+    name: "Meinl Pad (Test 5)",
+    type: "6\" Practice Pad",
+    price: "Inquire",
     color: "bg-cyan-600",
-    description: "Ultra-fast response time with zero double-triggering. Clamps directly to any bass drum hoop for seamless hybrid acoustic/electronic tracking.",
-    specs: ["Zero Latency", "Die-Cast Housing", "XLR/TRS Output"],
-    images: ["/Gallery/trigger_bg.webp"]
+    description: "Practice quietly and build muscle at any hour. Features a specially formulated, super-thick foam surface that provides realistic rebound with ultra-low volume.",
+    specs: ["6\" Diameter", "Marshmallow Foam Top", "Cymbal Stand Mountable", "Non-slip Composite Base"],
+    images: ["/gears/gear1/1.webp", "/gears/gear1/2.webp", "/gears/gear1/3.webp", "/gears/gear1/4.webp"]
   }
 ];
 

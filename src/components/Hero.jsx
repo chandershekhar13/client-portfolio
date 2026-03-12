@@ -6,20 +6,20 @@ export default function Hero() {
     <section id="home" className="relative w-full min-h-[100dvh] flex items-center justify-center bg-black overflow-hidden">
       
       <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover object-[25%_center] md:object-center grayscale brightness-[0.4] contrast-125 scale-[1.05]"
-        >
-          <source src="/mainvideo/main.webm" type="video/webm" />
-          <source src="/mainvideo/main.mp4" type="video/mp4" />
-        </video>
-        
-        <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-black via-transparent to-transparent z-10 pointer-events-none" />
-      </div>
+  <video
+    autoPlay
+    loop
+    muted
+    playsInline // This forces iOS to play it in the background
+    className="w-full h-full object-cover object-[25%_center] md:object-center grayscale brightness-[0.4] contrast-125 scale-[1.05]"
+  >
+    {/* Only serving the universally supported MP4 */}
+    <source src="/mainvideo/main.mp4" type="video/mp4" />
+  </video>
+  
+  <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
+  <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-black via-transparent to-transparent z-10 pointer-events-none" />
+</div>
 
       <div className="relative z-20 w-full max-w-7xl mx-auto flex flex-col items-center justify-center px-6">
         
