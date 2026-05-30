@@ -17,7 +17,7 @@ export default function Footer() {
             External Channel
           </span>
           <a 
-            href="#" 
+            href="https://www.instagram.com/mark_official99/"
             target="_blank" 
             rel="noreferrer"
             className="text-2xl md:text-3xl font-light uppercase tracking-[0.2em] text-white/50 hover:text-indigo-400 md:hover:translate-x-2 transition-all duration-300 w-fit flex items-center gap-4 group"
