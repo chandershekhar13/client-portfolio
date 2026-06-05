@@ -6,10 +6,9 @@ import "./globals.css";
 
 
 export const metadata = {
-  title: "Musician Portfolio",
-  description: "Official Portfolio",
+  title: "Mark Drums | Professional Drummer & Expert Lessons",
+  description: "Blending the depth of Indian Classical Guru–Shishya Parampara with modern drum expression. Join the Mark School of Drums.",
 };
-
 export default function RootLayout({ children }) {
   return (
     // ADDED: className="scroll-smooth"
