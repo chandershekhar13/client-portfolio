@@ -83,6 +83,9 @@ export default function Gallery() {
 
   const startX = useRef(0);
   const scrollLeftStart = useRef(0);
+  
+  // NEW: Ref to track if we've already forced the start position
+  const hasInitialized = useRef(false);
 
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -104,8 +107,8 @@ export default function Gallery() {
 
     const scrollContainer = scrollRef.current;
 
-    // --- CHANGED START LOGIC HERE ---
-    if (scrollContainer.scrollLeft === 0) {
+    // --- NEW LOGIC: Forces File 46 exactly once upon load ---
+    if (!hasInitialized.current) {
       // File 46 is at index 45 in the array (0-indexed)
       const targetElement = scrollContainer.children[45];
       
@@ -119,8 +122,11 @@ export default function Gallery() {
         // Fallback just in case
         scrollContainer.scrollLeft = scrollContainer.scrollWidth / 2;
       }
+      
+      // Mark as initialized so this block won't run again if the user opens a lightbox
+      hasInitialized.current = true;
     }
-    // ---------------------------------
+    // --------------------------------------------------------
 
     let animationFrameId;
 
