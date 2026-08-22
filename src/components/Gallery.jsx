@@ -104,9 +104,23 @@ export default function Gallery() {
 
     const scrollContainer = scrollRef.current;
 
+    // --- CHANGED START LOGIC HERE ---
     if (scrollContainer.scrollLeft === 0) {
-      scrollContainer.scrollLeft = scrollContainer.scrollWidth / 2;
+      // File 46 is at index 45 in the array (0-indexed)
+      const targetElement = scrollContainer.children[45];
+      
+      if (targetElement) {
+        // Calculate exactly where to scroll so File 46 sits in the center of the view
+        scrollContainer.scrollLeft = 
+          targetElement.offsetLeft - 
+          (scrollContainer.clientWidth / 2) + 
+          (targetElement.clientWidth / 2);
+      } else {
+        // Fallback just in case
+        scrollContainer.scrollLeft = scrollContainer.scrollWidth / 2;
+      }
     }
+    // ---------------------------------
 
     let animationFrameId;
 
