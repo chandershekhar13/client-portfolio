@@ -146,7 +146,7 @@ export default function Navbar() {
               className="absolute bottom-12 text-center"
             >
               <p className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold mb-4">Direct Inquiries</p>
-              <a href="mailto:booking@marksir.com" className="text-white/70 text-sm tracking-widest">booking@marksir.com</a>
+              <a href="mailto:markdrumsofficial@gmail.com" className="text-white/70 text-sm tracking-widest">markdrumsofficial@gmail.com</a>
             </motion.div>
           </motion.div>
         )}
